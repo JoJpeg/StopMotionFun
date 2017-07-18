@@ -3,26 +3,34 @@ package com.jojpeg;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.video.Capture;
+
+import java.util.ArrayList;
 
 /**
  * Created by J4ck on 12.07.2017.
  */
 public class Renderer {
     boolean black = false;
-    Capture cam;
-    PImage frame;
+
     QuadGrid plane;
     PImage errorImage;
+    PApplet p;
+    PGraphics canvas;
 
-    public Renderer(PApplet p) {
-        String[] cameras = Capture.list();
-        if(cameras != null && cameras.length > 0){
-            cam = new Capture(p, cameras[0]);
-            cam.start();
-        }
-        // width, height, nbr slices accross, nbr slices down
-        plane = new QuadGrid(640, 480, 10, 10);
+    ArrayList<Layer> layers = new ArrayList<>();
+
+    class Layer{
+        PImage frame;
+        int opacity = 255;
+    }
+
+    public Renderer(PApplet p, int width, int height) {
+
+        this.p = p;
+        // renderWidth, renderHeight, nbr slices accross, nbr slices down
+
+        plane = new QuadGrid(width, height, 10, 10);
+        canvas = p.createGraphics(plane.renderWidth, plane.renderHeight);
 
         errorImage = makeImage((PGraphics)errorImage, p);
     }
@@ -33,21 +41,27 @@ public class Renderer {
             return;
         }
 
-        if (cam != null && cam.available()) {
-            cam.read();
-//            frame = cam;
-        }
-
-        if(cam == null || !cam.available()) frame = errorImage;
+        if(layers.get(0) == null) setFrame(errorImage);
         p.background(137);
 
-        plane.draw(p, frame);
+        for (Layer layer : layers) {
+            if(layer.frame != null) {
+                p.tint(255, layer.opacity);
+                plane.draw(p, layer.frame);
+            }
+        }
+        p.tint(255,255);
+        plane.draw(p, canvas);
+        if(canvas.pixels != null) canvas.clear();
 
         p.strokeWeight(5);
         p.point(plane.model.shift[0], plane.model.shift[1]);
+        layers.clear();
     }
 
-    public PImage makeImage(PGraphics img, PApplet p) {
+
+
+    public static PImage makeImage(PGraphics img, PApplet p) {
         img = p.createGraphics(640, 480, p.P2D);
         img.beginDraw();
         img.background(255, 255, 200);
@@ -72,8 +86,34 @@ public class Renderer {
         return img;
     }
 
-    public void snapFrame(){
-        frame = cam.get();
+    public void setFrame(PImage frame){
+        setLayer(frame,0,255);
+    }
+
+    public void setLayer(PImage frame, int layerIndex, int opacity) {
+        Layer layer = new Layer();
+        layer.frame = frame;
+        layer.opacity = opacity;
+        if(layers.size() > 0 && layerIndex < layers.size()) {
+            this.layers.add(layerIndex, layer);
+        }
+        else layers.add(layer);
+    }
+
+    public void drawOnCanvas(PImage frame, int x, int y){
+
+        if(this.layers.get(0) == null){
+            setFrame(frame);
+            return;
+        }
+
+//        if(canvas.pixels != null) canvas.clear();
+        canvas.beginDraw();
+        canvas.image(canvas,0,0);
+        canvas.image(frame,x,y);
+        canvas.endDraw();
+
+
     }
 
     public QuadGrid getPlane() {

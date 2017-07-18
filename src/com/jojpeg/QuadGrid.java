@@ -2,22 +2,21 @@ package com.jojpeg;// There is no need to modify the code in this tab.
 
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.core.PVector;
 
 public class QuadGrid {
 
     private final int nbrCols, nbrRows;
     private final VPoint[][] vertexPoints;
-    QuadModel model;
-    private int width, height;
-    class QuadModel extends Model {
-        float[] cornersX = {
+    public QuadModel model;
+    public int renderWidth, renderHeight;
+    public class QuadModel extends Model {
+        public float[] cornersX = {
                 30, 377, 343, 73
         };
-        float[] cornersY = {
+        public float[] cornersY = {
                 10, 23, 333, 389
         };
-        float[] shift = {0,0};
+        public float[] shift = {0,0};
     }
 
     /**
@@ -26,22 +25,22 @@ public class QuadGrid {
      * <a href="/two/profile/param">@param</a> nbrYslices must be >= 1
      */
 
-    public QuadGrid(int width, int height, int nbrXslices, int nbrYslices) {
-        this.width = width;
-        this.height = height;
+    public QuadGrid(int renderWidth, int renderHeight, int nbrXslices, int nbrYslices) {
+        this.renderWidth = renderWidth;
+        this.renderHeight = renderHeight;
         model = new QuadModel();
         //this.img = img;
         nbrCols = (nbrXslices >= 1) ? nbrXslices : 1;
         nbrRows = (nbrYslices >= 1) ? nbrYslices : 1;
 
         vertexPoints = new VPoint[nbrCols + 1][nbrRows + 1];
-        // Set corners so top-left is [0,0] and bottom-right is [image width, image height]
+        // Set corners so top-left is [0,0] and bottom-right is [image renderWidth, image renderHeight]
         float deltaU = 1.0f / nbrCols;
         float deltaV = 1.0f / nbrRows;
         for (int col = 0; col <= nbrCols; col++)
             for (int row = 0; row <= nbrRows; row++)
                 vertexPoints[col][row] = new VPoint(col * deltaU, row * deltaV);
-        setCorners(0, 0, width, 0, width, height, 0, height);
+        setCorners(0, 0, renderWidth, 0, renderWidth, renderHeight, 0, renderHeight);
 
     }
 
@@ -61,8 +60,8 @@ public class QuadGrid {
     public void setCorners(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
         if (vertexPoints == null) return;
 
-        float sx = PApplet.map(model.shift[0],0, width, 0, 1 );
-        float sy = PApplet.map(model.shift[1],0, height, 0, 1 );
+        float sx = PApplet.map(model.shift[0],0, renderWidth, 0, 1 );
+        float sy = PApplet.map(model.shift[1],0, renderHeight, 0, 1 );
 
         // Do outer corners
         vertexPoints[0][0].setXY(x0, y0);

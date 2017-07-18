@@ -1,10 +1,10 @@
 package com.jojpeg;
 
+import com.jojpeg.interactionStates.AnimationInteractionState;
+import com.jojpeg.interactionStates.InteractionState;
+import com.jojpeg.interactionStates.ProjectionInteractionState;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.core.PImage;
-
-import java.util.ArrayList;
 
 /**
  * Created by J4ck on 12.07.2017.
@@ -14,87 +14,75 @@ public class ProcessingCore extends PApplet {
     SaveSystem saveSystem;
 
     Renderer renderer;
-    PImage errorImage;
-
     PGraphics img;
-    int state = 1;
+
+    Animation animation;
+    Cam cam;
+
+    InteractionState currentInteractionState;
+    ProjectionInteractionState projectionInput;
+    AnimationInteractionState animationInput;
 
     @Override
     public void settings() {
-        size(600, 500, P2D);
+        size(1200, 800, P2D);
 //        fullScreen();
     }
 
-    ArrayList<PImage> initFrames = new ArrayList<>();
-    Animation animation = new Animation(this);
     public void setup() {
-        animation.addFrame(loadImage("frame (1).gif"), 0);
-        animation.addFrame(loadImage("frame (2).gif"), 1);
-        animation.addFrame(loadImage("frame (3).gif"), 2);
 
-        initFrames.add(loadImage("frame (1).gif"));
-        initFrames.add(loadImage("frame (2).gif"));
-        initFrames.add(loadImage("frame (3).gif"));
+        frameRate(10);
+        cam = new Cam(this);
+        animation = new Animation(this);
 
-
-        animation.moveFrame(2, 0);
+//        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
+//        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
+//        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
 
         saveSystem = new SaveSystem(System.getProperty("user.dir"));
-//        renderer = new Renderer(this);
+        renderer = new Renderer(this, width, height);
+        projectionInput = new ProjectionInteractionState(renderer);
+        animationInput = new AnimationInteractionState(animation, cam, renderer);
+        currentInteractionState = animationInput;
     }
 
 
     public void draw() {
-        int i = 0;
-        for (PImage frame : initFrames){
-            image(frame, (frame.width * i) , 0);
-            i++;
-        }
-        i = 0;
 
-        for (PImage frame : animation.frames){
-            image(frame, (frame.width * i), frame.height);
-            i++;
-        }
-
-
-
-        /*
+//        image(animation.play(), 0 ,0);
+//        renderer.frame = animation.play();
+        currentInteractionState.update(this);
         renderer.draw(this);
-
-        if(mousePressed){
-            if(state <= 3) {
-                renderer.getPlane().getCornersX()[state] += mouseX - pmouseX;
-                renderer.getPlane().getCornersY()[state] += mouseY - pmouseY;
-            }
-            else{
-                if(state == 4){
-                    renderer.getPlane().model.shift[0] = mouseX;
-                    renderer.getPlane().model.shift[1] = mouseY;
-                    println(renderer.getPlane().model.shift[0]);
-                }
-            }
-            renderer.getPlane().UpdateCorners();
-        }
-        */
     }
 
+
     public void keyReleased() {
-        if (key >= '1' && key <= '5')
-            state = (key - '0') - 1;
+        if(keyCode == TAB){
+            currentInteractionState = animationInput;
+        }
+        if(key == 'm'){
+            currentInteractionState = projectionInput;
+        }
+
+        currentInteractionState.keyReleased(this, key);
+
         if (key == 's'){
             saveSystem.save(renderer.plane.model);
+
+            return;
         }
+
         if (key == 'l'){
             renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
             renderer.getPlane().UpdateCorners();
+            return;
         }
+
         if(key == 'h'){
             renderer.black = !renderer.black;
+            return;
         }
-        if(key == 'f'){
-            renderer.snapFrame();
-        }
+
     }
 
     public void SaveData(){
