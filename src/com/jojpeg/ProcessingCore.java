@@ -4,6 +4,8 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
 
+import java.util.ArrayList;
+
 /**
  * Created by J4ck on 12.07.2017.
  */
@@ -19,17 +21,45 @@ public class ProcessingCore extends PApplet {
 
     @Override
     public void settings() {
-        size(1600, 1000, P2D);
+        size(600, 500, P2D);
 //        fullScreen();
     }
 
+    ArrayList<PImage> initFrames = new ArrayList<>();
+    Animation animation = new Animation(this);
     public void setup() {
+        animation.addFrame(loadImage("frame (1).gif"), 0);
+        animation.addFrame(loadImage("frame (2).gif"), 1);
+        animation.addFrame(loadImage("frame (3).gif"), 2);
+
+        initFrames.add(loadImage("frame (1).gif"));
+        initFrames.add(loadImage("frame (2).gif"));
+        initFrames.add(loadImage("frame (3).gif"));
+
+
+        animation.moveFrame(2, 0);
+
         saveSystem = new SaveSystem(System.getProperty("user.dir"));
-        renderer = new Renderer(this);
+//        renderer = new Renderer(this);
     }
 
 
     public void draw() {
+        int i = 0;
+        for (PImage frame : initFrames){
+            image(frame, (frame.width * i) , 0);
+            i++;
+        }
+        i = 0;
+
+        for (PImage frame : animation.frames){
+            image(frame, (frame.width * i), frame.height);
+            i++;
+        }
+
+
+
+        /*
         renderer.draw(this);
 
         if(mousePressed){
@@ -46,6 +76,7 @@ public class ProcessingCore extends PApplet {
             }
             renderer.getPlane().UpdateCorners();
         }
+        */
     }
 
     public void keyReleased() {
