@@ -9,5 +9,7 @@ public abstract class InteractionState {
 
     public abstract void update(PApplet p);
 
+    public abstract void lateUpdate(PApplet p);
+
     public abstract void keyReleased(PApplet p, char key);
 }

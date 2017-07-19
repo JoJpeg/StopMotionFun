@@ -53,6 +53,7 @@ public class ProcessingCore extends PApplet {
 //        renderer.frame = animation.play();
         currentInteractionState.update(this);
         renderer.draw(this);
+        currentInteractionState.lateUpdate(this);
     }
 
 

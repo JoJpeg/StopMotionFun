@@ -41,7 +41,7 @@ public class Renderer {
             return;
         }
 
-        if(layers.get(0) == null) setFrame(errorImage);
+        if(layers.size() == 0 || layers.get(0) == null) setFrame(errorImage);
         p.background(137);
 
         for (Layer layer : layers) {
@@ -52,7 +52,11 @@ public class Renderer {
         }
         p.tint(255,255);
         plane.draw(p, canvas);
-        if(canvas.pixels != null) canvas.clear();
+        if(canvas.pixels != null) {
+            canvas.beginDraw();
+            canvas.clear();
+            canvas.endDraw();
+        }
 
         p.strokeWeight(5);
         p.point(plane.model.shift[0], plane.model.shift[1]);

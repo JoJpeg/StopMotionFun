@@ -25,6 +25,11 @@ public class ProjectionInteractionState extends InteractionState {
             movePlaneAnchor(move);
         }
 
+    }
+
+    @Override
+    public void lateUpdate(PApplet p) {
+
         drawUI(p);
     }
 

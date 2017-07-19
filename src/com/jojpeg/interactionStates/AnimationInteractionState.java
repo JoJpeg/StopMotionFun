@@ -31,7 +31,7 @@ public class AnimationInteractionState extends InteractionState {
     }
 
     @Override
-    public void update(PApplet p) {
+    public void lateUpdate(PApplet p) {
         if(play) {
             renderer.setFrame(animation.play());
         }
@@ -96,6 +96,11 @@ public class AnimationInteractionState extends InteractionState {
         if(key == 'x'){
             animation.removeFrame(animation.caretPos);
         }
+
+    }
+
+    @Override
+    public void update(PApplet p) {
 
     }
 
