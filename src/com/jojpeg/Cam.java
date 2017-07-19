@@ -24,17 +24,26 @@ public class Cam {
     }
 
     public PImage getRealtime(){
-         capture.read();
+        if(!ready()) return Renderer.NullImage;
+        capture.read();
         return capture;
     }
 
     public PImage getImage(){
-        if (capture != null && capture.available()) {
+        if (ready()) {
             capture.read();
             return new PImage(capture.getImage());
         }
 
-        return Renderer.makeImage(new PGraphics(), p);
+        return Renderer.NullImage;
 
     }
+
+    public boolean ready(){
+        if (capture != null && capture.available()) {
+            return true;
+        }
+        return false;
+    }
+
 }

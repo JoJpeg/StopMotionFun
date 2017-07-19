@@ -1,8 +1,6 @@
 package com.jojpeg.interactionStates;
 
-import com.jojpeg.Animation;
-import com.jojpeg.Cam;
-import com.jojpeg.Renderer;
+import com.jojpeg.*;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -30,6 +28,7 @@ public class AnimationInteractionState extends InteractionState {
         this.renderer = renderer;
     }
 
+
     @Override
     public void lateUpdate(PApplet p) {
         if(play) {
@@ -53,7 +52,6 @@ public class AnimationInteractionState extends InteractionState {
                 }
 
             }
-
         }
     }
 
@@ -101,6 +99,16 @@ public class AnimationInteractionState extends InteractionState {
 
     @Override
     public void update(PApplet p) {
+
+    }
+
+    @Override
+    public void save(SaveSystem saveSystem) {
+
+    }
+
+    @Override
+    public void load(SaveSystem saveSystem) {
 
     }
 

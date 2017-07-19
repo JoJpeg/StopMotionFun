@@ -2,8 +2,6 @@ package com.jojpeg;
 
 import processing.core.PApplet;
 import processing.core.PImage;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 
@@ -14,6 +12,15 @@ public class Animation {
 
     public int caretPos = 0;
     public int currentFrameIndex = 0;
+
+    public AnimationModel model;
+    public class AnimationModel extends Model{
+        String path;
+        String[] names;
+        int[] indices;
+    }
+
+
 
     class Frame{
         private PImage thumbnail;
@@ -133,5 +140,25 @@ public class Animation {
         if(caretPos > frames.size() - 1) caretPos = 0;
     }
 
+    public AnimationModel getModel() {
+        if(model == null){
+            model = new AnimationModel();
+            model.indices = new int[frames.size()];
+            model.names = new String[frames.size()];
+            for (int i = 0; i < frames.size(); i++) {
+                model.indices[i] = i;
+                model.names[i] = frames.get(i).name;
+
+            }
+        }
+
+        return model;
+    }
+
+    public void load(AnimationModel model){
+        if(model.path == null) return;
+        //TODO
+
+    }
 
 }

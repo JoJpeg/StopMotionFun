@@ -6,6 +6,8 @@ import com.jojpeg.interactionStates.ProjectionInteractionState;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
+import java.io.File;
+
 /**
  * Created by J4ck on 12.07.2017.
  */
@@ -35,15 +37,16 @@ public class ProcessingCore extends PApplet {
         cam = new Cam(this);
         animation = new Animation(this);
 
-//        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
-//        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
-//        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
+        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
+        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
+        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
 
-        saveSystem = new SaveSystem(System.getProperty("user.dir"));
+        saveSystem = new SaveSystem(this);
         renderer = new Renderer(this, width, height);
         projectionInput = new ProjectionInteractionState(renderer);
         animationInput = new AnimationInteractionState(animation, cam, renderer);
         currentInteractionState = animationInput;
+        renderer.getPlane().UpdateCorners();
     }
 
 
@@ -68,14 +71,13 @@ public class ProcessingCore extends PApplet {
         currentInteractionState.keyReleased(this, key);
 
         if (key == 's'){
-            saveSystem.save(renderer.plane.model);
-
+            currentInteractionState.save(saveSystem);
             return;
         }
 
         if (key == 'l'){
-            renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
-            renderer.getPlane().UpdateCorners();
+//            renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
+            currentInteractionState.load(saveSystem);
             return;
         }
 
@@ -85,9 +87,4 @@ public class ProcessingCore extends PApplet {
         }
 
     }
-
-    public void SaveData(){
-
-    }
-
 }

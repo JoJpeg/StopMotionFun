@@ -1,7 +1,9 @@
 package com.jojpeg.interactionStates;
 
 
+import com.jojpeg.QuadGrid;
 import com.jojpeg.Renderer;
+import com.jojpeg.SaveSystem;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -73,5 +75,17 @@ public class ProjectionInteractionState extends InteractionState {
             }
         }
         renderer.getPlane().UpdateCorners();
+    }
+
+    @Override
+    public void save(SaveSystem saveSystem) {
+        saveSystem.save(renderer.getPlane().model);
+    }
+
+    @Override
+    public void load(SaveSystem saveSystem) {
+        renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
+        renderer.getPlane().UpdateCorners();
+
     }
 }

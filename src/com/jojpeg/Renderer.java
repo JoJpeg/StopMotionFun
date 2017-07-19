@@ -13,7 +13,7 @@ public class Renderer {
     boolean black = false;
 
     QuadGrid plane;
-    PImage errorImage;
+    public static PImage NullImage;
     PApplet p;
     PGraphics canvas;
 
@@ -32,7 +32,7 @@ public class Renderer {
         plane = new QuadGrid(width, height, 10, 10);
         canvas = p.createGraphics(plane.renderWidth, plane.renderHeight);
 
-        errorImage = makeImage((PGraphics)errorImage, p);
+        NullImage = makeImage((PGraphics) NullImage, p);
     }
 
     public void draw(PApplet p){
@@ -41,7 +41,7 @@ public class Renderer {
             return;
         }
 
-        if(layers.size() == 0 || layers.get(0) == null) setFrame(errorImage);
+        if(layers.size() == 0 || layers.get(0) == null) setFrame(NullImage);
         p.background(137);
 
         for (Layer layer : layers) {
