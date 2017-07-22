@@ -1,6 +1,7 @@
 package com.jojpeg.interactionStates;
 
 import com.jojpeg.*;
+import com.jojpeg.input.Input;
 import gifAnimation.GifMaker;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -11,11 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by J4ck on 18.07.2017.
  */
-public class AnimationInteractionState extends InteractionState {
+public class AnimatingController extends Controller {
     PApplet p;
     Animation animation;
     Renderer renderer;
     Cam cam;
+    SaveSystem saveSystem;
 
     int onionFront = 1;
     int onionBack = 1;
@@ -26,7 +28,8 @@ public class AnimationInteractionState extends InteractionState {
     boolean project = false;
     boolean onion = false;
 
-    public AnimationInteractionState(PApplet p, Animation animation, Cam cam, Renderer renderer) {
+    public AnimatingController(PApplet p, Animation animation, Cam cam, Renderer renderer, SaveSystem saveSystem) {
+        this.saveSystem = saveSystem;
         this.p = p;
         this.animation = animation;
         this.cam = cam;
@@ -60,16 +63,17 @@ public class AnimationInteractionState extends InteractionState {
     }
 
     @Override
-    public void keyReleased(int keyCode, char key) {
+    public void processInput(Input input) {
 
-        if(keyCode == PApplet.LEFT){
+        if(input.keyIsDown(Input.Key.LEFT, "Caret Left")){
             animation.caretLeft();
         }
-        if(p.keyCode == PApplet.RIGHT){
+
+        if(input.keyIsDown(Input.Key.RIGHT, "Caret Right")){
             animation.caretRight();
         }
 
-        if(key == ' '){
+        if(input.keyIsDown(Input.Key.SPACE, "Play/Stop")){
             play = !play;
             if(play) {
                 onion = false;
@@ -80,24 +84,36 @@ public class AnimationInteractionState extends InteractionState {
             }
         }
 
-        if(key == 'f'){
+        if(input.keyIsDown('f', "Add Frame")){
             animation.addFrame(cam.getImage());
         }
 
-        if(key == 'r'){
+        if(input.keyIsDown('r', "Replace Frame")){
             animation.replaceFrame(cam.getImage());
         }
 
-        if(key == 'p'){
+        if(input.keyIsDown('p', "Project Camera Input")){
             project = !project;
         }
 
-        if(key == 'o'){
+        if(input.keyIsDown('o', "Activate Onion Skin")){
             onion = !onion;
         }
 
-        if(key == 'x'){
+        if(input.keyIsDown('x', "Delete Frame")){
             animation.removeFrame(animation.caretPos);
+        }
+
+
+        if(input.keyIsDown('h', "Black Screen")){
+            renderer.black = !renderer.black;
+        }
+
+        if (input.keyIsDown('s', "Save")){
+            save(saveSystem);
+        }
+        if (input.keyIsDown('l', "Load")) {
+            load(saveSystem);
         }
 
     }

@@ -10,7 +10,9 @@ import java.util.ArrayList;
  * Created by J4ck on 12.07.2017.
  */
 public class Renderer {
-    boolean black = false;
+    public int rotation = 0;
+
+    public boolean black = false;
 
     QuadGrid plane;
     public static PImage NullImage;
@@ -18,6 +20,7 @@ public class Renderer {
     PGraphics canvas;
 
     ArrayList<Layer> layers = new ArrayList<>();
+
 
     class Layer{
         PImage frame;
@@ -31,11 +34,13 @@ public class Renderer {
 
         plane = new QuadGrid(width, height, 10, 10);
         canvas = p.createGraphics(plane.renderWidth, plane.renderHeight);
-
         NullImage = makeImage((PGraphics) NullImage, p);
     }
 
     public void draw(PApplet p){
+
+        //TODO: Rotate
+
         if(black){
             p.background(0);
             return;
@@ -50,6 +55,7 @@ public class Renderer {
                 plane.draw(p, layer.frame);
             }
         }
+
         p.tint(255,255);
         plane.draw(p, canvas);
         if(canvas.pixels != null) {
@@ -118,6 +124,11 @@ public class Renderer {
         canvas.endDraw();
 
 
+    }
+
+    public void rotate() {
+        rotation += 90;
+        rotation = rotation % 360;
     }
 
     public QuadGrid getPlane() {

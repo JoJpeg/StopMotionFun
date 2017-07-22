@@ -1,29 +1,28 @@
 package com.jojpeg;
 
-import com.jojpeg.interactionStates.AnimationInteractionState;
-import com.jojpeg.interactionStates.InteractionState;
-import com.jojpeg.interactionStates.ProjectionInteractionState;
+import com.jojpeg.input.Input;
+import com.jojpeg.input.KeyBoardInput;
+import com.jojpeg.interactionStates.AnimatingController;
+import com.jojpeg.interactionStates.Controller;
+import com.jojpeg.interactionStates.ModeController;
+import com.jojpeg.interactionStates.ProjectionController;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
-import java.io.File;
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by J4ck on 12.07.2017.
  */
 
 public class ProcessingCore extends PApplet {
-    SaveSystem saveSystem;
-
-    Renderer renderer;
-    PGraphics img;
-
-    Animation animation;
-    Cam cam;
-
-    InteractionState currentInteractionState;
-    ProjectionInteractionState projectionInput;
-    AnimationInteractionState animationInput;
+    private Renderer renderer;
+    private Input input;
+    private Controller currentController;
+    public static ProjectionController projectionController;
+    public static AnimatingController animatingController;
+    private ModeController modeController;
 
     @Override
     public void settings() {
@@ -33,65 +32,59 @@ public class ProcessingCore extends PApplet {
 
     public void setup() {
 
-        cam = new Cam(this);
-        animation = new Animation(this);
+        Cam cam = new Cam(this);
+        Animation animation = new Animation(this);
+
+        input = new KeyBoardInput();
 
 //        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
 //        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
 //        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
 
-        saveSystem = new SaveSystem(this);
+        SaveSystem saveSystem = new SaveSystem(this);
         renderer = new Renderer(this, width, height);
-        projectionInput = new ProjectionInteractionState(renderer);
-        animationInput = new AnimationInteractionState(this, animation, cam, renderer);
-        currentInteractionState = animationInput;
+
+        projectionController = new ProjectionController(renderer, saveSystem);
+        animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
+        modeController = new ModeController(this, new Controller[]{projectionController, modeController});
+
+        setCurrentController(modeController);
+
         renderer.getPlane().UpdateCorners();
     }
 
 
     public void draw() {
-//        translate(width/2, height/2);
-        rotate(rotation);
-//        image(animation.play(), 0 ,0);
-//        renderer.frame = animation.play();
-        currentInteractionState.update(this);
+        background(136);
+        currentController.update(this);
         renderer.draw(this);
-        currentInteractionState.lateUpdate(this);
-        rotate(0);
+        currentController.processInput(input);
+        stroke(0,0,0);
+        currentController.lateUpdate(this);
+        input.draw(this);
     }
 
 
-    int rotation = 0;
+    public void keyPressed(){
+        input.newKey(keyCode, key) ;
+        if(input.keyIsDown(Input.Key.TAB, "Select Mode")){
+            currentController = modeController;
+        }
+        println("____");
+        println(key + "  KeyCode: " + keyCode + " -> (char):" + (char)keyCode);
+        println(key + "  (int): " + (int) key);
+        println(input.showKeys());
+        //aprintln(key + "  (KeyStroke): " + (int)KeyCode.getKeyCode(key));
+
+    }
+
     public void keyReleased() {
-        if(keyCode == TAB){
-            currentInteractionState = animationInput;
-        }
-        if(key == 'm'){
-            currentInteractionState = projectionInput;
-        }
+//        Toolkit.getDefaultToolkit().beep();
+        input.released(keyCode);
+    }
 
-        if(key =='c'){
-            rotation += 90;
-            rotation = rotation % 360;
-        }
-
-        currentInteractionState.keyReleased(this.keyCode, key);
-
-        if (key == 's'){
-            currentInteractionState.save(saveSystem);
-            return;
-        }
-
-        if (key == 'l'){
-//            renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
-            currentInteractionState.load(saveSystem);
-            return;
-        }
-
-        if(key == 'h'){
-            renderer.black = !renderer.black;
-            return;
-        }
-
+    public void setCurrentController(Controller currentController) {
+        this.currentController = currentController;
+        currentController.processInput(input);
     }
 }
