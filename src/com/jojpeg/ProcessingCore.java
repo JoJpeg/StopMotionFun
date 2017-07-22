@@ -48,7 +48,7 @@ public class ProcessingCore extends PApplet {
         animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
         modeController = new ModeController(this, new Controller[]{projectionController, modeController});
 
-        setCurrentController(projectionController);
+        setCurrentController(modeController);
 
         renderer.getPlane().UpdateCorners();
     }

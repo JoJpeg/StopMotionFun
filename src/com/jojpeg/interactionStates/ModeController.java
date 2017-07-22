@@ -24,6 +24,10 @@ public class ModeController extends Controller {
 
     @Override
     public void lateUpdate(PApplet p) {
+
+
+        //TODO: Draw on Plane Canvas (implement "PGraphics beginDraw(); endDraw();" in Renderer)
+
         int textSize = 15;
         int padding = 5;
         p.strokeWeight(3);
