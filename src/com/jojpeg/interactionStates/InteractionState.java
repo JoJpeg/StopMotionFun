@@ -12,7 +12,7 @@ public abstract class InteractionState {
 
     public abstract void lateUpdate(PApplet p);
 
-    public abstract void keyReleased(PApplet p, char key);
+    public abstract void keyReleased(int keyCode, char key);
 
     public abstract void save(SaveSystem saveSystem);
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Animation {
 
+    public static int fps = 10;
     public ArrayList<Frame> frames = new ArrayList<>();
     private PApplet p;
 
@@ -14,15 +15,15 @@ public class Animation {
     public int currentFrameIndex = 0;
 
     public AnimationModel model;
+
+
     public class AnimationModel extends Model{
-        String path;
-        String[] names;
-        int[] indices;
+        public String path;
+        public String[] names;
+        public int[] indices;
     }
 
-
-
-    class Frame{
+    public class Frame{
         private PImage thumbnail;
         PImage frame;
         String name;
@@ -32,12 +33,20 @@ public class Animation {
             this.name = name;
         }
 
+        public PImage getImage(){
+            return frame;
+        }
+
         public PImage getThumbnail(){
             //TODO: calculate Thumb
             if(thumbnail == null){
                 thumbnail = new PImage(frame.getImage());
             }
             return thumbnail;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
@@ -73,6 +82,7 @@ public class Animation {
     public Animation(PApplet pApplet){
             this.p = pApplet;
     }
+
 
     public void addFrameAtPosition(PImage frame, int index){
         caretPos = index;
@@ -155,10 +165,12 @@ public class Animation {
         return model;
     }
 
-    public void load(AnimationModel model){
-        if(model.path == null) return;
-        //TODO
+    public ArrayList<Frame> getFrames() {
+        return frames;
+    }
 
+    public Frame makeFrame(PImage image, String name){
+        return new Frame(image,name);
     }
 
 }

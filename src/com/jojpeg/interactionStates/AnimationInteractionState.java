@@ -1,8 +1,12 @@
 package com.jojpeg.interactionStates;
 
 import com.jojpeg.*;
+import gifAnimation.GifMaker;
 import processing.core.PApplet;
 import processing.core.PImage;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by J4ck on 18.07.2017.
@@ -22,12 +26,12 @@ public class AnimationInteractionState extends InteractionState {
     boolean project = false;
     boolean onion = false;
 
-    public AnimationInteractionState(Animation animation, Cam cam, Renderer renderer) {
+    public AnimationInteractionState(PApplet p, Animation animation, Cam cam, Renderer renderer) {
+        this.p = p;
         this.animation = animation;
         this.cam = cam;
         this.renderer = renderer;
     }
-
 
     @Override
     public void lateUpdate(PApplet p) {
@@ -56,8 +60,9 @@ public class AnimationInteractionState extends InteractionState {
     }
 
     @Override
-    public void keyReleased(PApplet p, char key) {
-        if(p.keyCode == PApplet.LEFT){
+    public void keyReleased(int keyCode, char key) {
+
+        if(keyCode == PApplet.LEFT){
             animation.caretLeft();
         }
         if(p.keyCode == PApplet.RIGHT){
@@ -68,7 +73,7 @@ public class AnimationInteractionState extends InteractionState {
             play = !play;
             if(play) {
                 onion = false;
-                p.frameRate(10);
+                p.frameRate(Animation.fps);
             }
             else {
                 p.frameRate(60);
@@ -104,11 +109,49 @@ public class AnimationInteractionState extends InteractionState {
 
     @Override
     public void save(SaveSystem saveSystem) {
+        saveSystem.setMessage("Save Animation");
+        saveSystem.save(animation.getModel());
+        File selection = saveSystem.getLastSelection();
+        ArrayList<Animation.Frame> frames = animation.getFrames();
+        String parentPath = selection.getParent() + "\\";
+        GifMaker gif = new GifMaker(p, parentPath  + "_Anim_" +frames.get(0).getName() + ".gif");
+        gif.setRepeat(0);
+
+        for (int i = 0; i < frames.size(); i++) {
+            Animation.Frame frame = frames.get(i);
+            String path = parentPath + frame.getName()+ " - " + p.nf(i, 5) + ".png";
+            System.out.println(path);
+            frame.getImage().save(path);
+
+            gif.setDelay(1000 / Animation.fps);
+            gif.addFrame(frame.getImage());
+        }
+
+        gif.finish();
 
     }
 
     @Override
     public void load(SaveSystem saveSystem) {
+
+        animation.model = (Animation.AnimationModel)saveSystem.load(animation.getModel());
+        animation.model.path = saveSystem.getLastSelection().getParent() + "\\";
+
+        animation.frames.clear();
+        while (animation.frames.size() < animation.model.indices.length) {
+            animation.frames.add(null);
+        }
+        animation.caretPos = 0;
+
+        String[] names = animation.model.names;
+        for (int i = 0; i < names.length; i++) {
+            String name = names[i];
+            PImage image = p.loadImage(animation.model.path  + name + " - " + p.nf(animation.model.indices[i], 5) + ".png");
+            animation.frames.set(
+                    animation.model.indices[i],
+                    animation.makeFrame(image, name)
+            );
+        }
 
     }
 
@@ -120,7 +163,6 @@ public class AnimationInteractionState extends InteractionState {
             thumbs[index] = animation.getThumbnail(i);
             index ++;
         }
-
 
         PImage box = p.createImage(111,111, p.RGB);
         box.loadPixels();
@@ -134,7 +176,6 @@ public class AnimationInteractionState extends InteractionState {
             PImage t = thumbs[i];
             int x = (renderer.getPlane().renderWidth / 2 - 385) + (i * 110);
             int y = 20;
-
             if(t == null){
                 t = p.createImage(100,100, p.RGB);
                 t.loadPixels();
@@ -143,13 +184,10 @@ public class AnimationInteractionState extends InteractionState {
                 }
                 t.updatePixels();
             }
-
             else {
                 t.resize(100,100);
             }
-
             renderer.drawOnCanvas(t, x, y);
         }
-
     }
 }

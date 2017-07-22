@@ -17,11 +17,14 @@ public class SaveSystem {
     Gson gson = new Gson();
     FileWriter writer;
     FileReader reader;
+    File lastSelection;
     PApplet p;
+
 
     public SaveSystem(PApplet p) {
         this.p = p;
     }
+
 
     public void save(Object object){
 
@@ -34,6 +37,7 @@ public class SaveSystem {
         String filename = chooser.getFile();
         if(filename != null) {
             selectedFile = new File(result, filename);
+            lastSelection = selectedFile;
             saveObject(object, selectedFile);
         }
 //        chooser.setFile(defaultSelection.getName());
@@ -51,6 +55,7 @@ public class SaveSystem {
         String filename = chooser.getFile();
         if(filename != null) {
             selectedFile = new File(result, filename);
+            lastSelection = selectedFile;
             return loadObject(object, selectedFile);
         }
         System.out.println("Loaded Null");
@@ -83,4 +88,11 @@ public class SaveSystem {
         return object;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public File getLastSelection() {
+        return lastSelection;
+    }
 }

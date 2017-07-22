@@ -33,33 +33,35 @@ public class ProcessingCore extends PApplet {
 
     public void setup() {
 
-        frameRate(10);
         cam = new Cam(this);
         animation = new Animation(this);
 
-        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
-        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
-        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
+//        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
+//        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
+//        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
 
         saveSystem = new SaveSystem(this);
         renderer = new Renderer(this, width, height);
         projectionInput = new ProjectionInteractionState(renderer);
-        animationInput = new AnimationInteractionState(animation, cam, renderer);
+        animationInput = new AnimationInteractionState(this, animation, cam, renderer);
         currentInteractionState = animationInput;
         renderer.getPlane().UpdateCorners();
     }
 
 
     public void draw() {
-
+//        translate(width/2, height/2);
+        rotate(rotation);
 //        image(animation.play(), 0 ,0);
 //        renderer.frame = animation.play();
         currentInteractionState.update(this);
         renderer.draw(this);
         currentInteractionState.lateUpdate(this);
+        rotate(0);
     }
 
 
+    int rotation = 0;
     public void keyReleased() {
         if(keyCode == TAB){
             currentInteractionState = animationInput;
@@ -68,7 +70,12 @@ public class ProcessingCore extends PApplet {
             currentInteractionState = projectionInput;
         }
 
-        currentInteractionState.keyReleased(this, key);
+        if(key =='c'){
+            rotation += 90;
+            rotation = rotation % 360;
+        }
+
+        currentInteractionState.keyReleased(this.keyCode, key);
 
         if (key == 's'){
             currentInteractionState.save(saveSystem);

@@ -36,7 +36,7 @@ public class ProjectionInteractionState extends InteractionState {
     }
 
     @Override
-    public void keyReleased(PApplet p, char key) {
+    public void keyReleased(int keyCode, char key) {
         if (key >= '1' && key <= '5') {
             projectionMoveIndex = (key - '0') - 1;
             return;
@@ -86,6 +86,5 @@ public class ProjectionInteractionState extends InteractionState {
     public void load(SaveSystem saveSystem) {
         renderer.getPlane().model = (QuadGrid.QuadModel)saveSystem.load(renderer.getPlane().model);
         renderer.getPlane().UpdateCorners();
-
     }
 }
