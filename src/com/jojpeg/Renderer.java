@@ -34,7 +34,11 @@ public class Renderer {
 
         plane = new QuadGrid(width, height, 10, 10);
         canvas = p.createGraphics(plane.renderWidth, plane.renderHeight);
+        canvas.beginDraw();
+        canvas.clear();
+        canvas.endDraw();
         NullImage = makeImage((PGraphics) NullImage, p);
+        setFrame(NullImage);
     }
 
     public void draw(PApplet p){
@@ -57,13 +61,14 @@ public class Renderer {
         }
 
         p.tint(255,255);
-        plane.draw(p, canvas);
-        if(canvas.pixels != null) {
-            canvas.beginDraw();
-            canvas.clear();
-            canvas.endDraw();
+        if(canvas != null) {
+            plane.draw(p, canvas);
+            if (canvas.pixels != null) {
+                canvas.beginDraw();
+                canvas.clear();
+                canvas.endDraw();
+            }
         }
-
         p.strokeWeight(5);
         p.point(plane.model.shift[0], plane.model.shift[1]);
         layers.clear();
@@ -97,7 +102,7 @@ public class Renderer {
     }
 
     public void setFrame(PImage frame){
-        setLayer(frame,0,255);
+        if(frame != null) setLayer(frame,0,255);
     }
 
     public void setLayer(PImage frame, int layerIndex, int opacity) {
@@ -111,19 +116,15 @@ public class Renderer {
     }
 
     public void drawOnCanvas(PImage frame, int x, int y){
-
         if(this.layers.get(0) == null){
             setFrame(frame);
             return;
         }
-
 //        if(canvas.pixels != null) canvas.clear();
         canvas.beginDraw();
         canvas.image(canvas,0,0);
         canvas.image(frame,x,y);
         canvas.endDraw();
-
-
     }
 
     public void rotate() {
