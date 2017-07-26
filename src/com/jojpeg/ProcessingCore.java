@@ -7,10 +7,6 @@ import com.jojpeg.interactionStates.Controller;
 import com.jojpeg.interactionStates.ModeController;
 import com.jojpeg.interactionStates.ProjectionController;
 import processing.core.PApplet;
-import processing.core.PGraphics;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Created by J4ck on 12.07.2017.
@@ -47,12 +43,8 @@ public class ProcessingCore extends PApplet {
         projectionController = new ProjectionController(renderer, saveSystem);
         animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
         modeController = new ModeController(this, new Controller[]{projectionController, modeController});
-
         setCurrentController(modeController);
-
-        renderer.getPlane().UpdateCorners();
     }
-
 
     public void draw() {
         background(136);
@@ -62,6 +54,7 @@ public class ProcessingCore extends PApplet {
         stroke(0,0,0);
         currentController.lateUpdate(this);
         input.draw(this);
+        input.clearDownEvents();
     }
 
 

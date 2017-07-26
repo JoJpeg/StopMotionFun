@@ -65,15 +65,15 @@ public class AnimatingController extends Controller {
     @Override
     public void processInput(Input input) {
 
-        if(input.keyIsDown(Input.Key.LEFT, "Caret Left")){
+        if(input.onIsDown(Input.Key.LEFT, "Caret Left")){
             animation.caretLeft();
         }
 
-        if(input.keyIsDown(Input.Key.RIGHT, "Caret Right")){
+        if(input.onIsDown(Input.Key.RIGHT, "Caret Right")){
             animation.caretRight();
         }
 
-        if(input.keyIsDown(Input.Key.SPACE, "Play/Stop")){
+        if(input.onIsDown(Input.Key.SPACE, "Play/Stop")){
             play = !play;
             if(play) {
                 onion = false;
@@ -84,35 +84,34 @@ public class AnimatingController extends Controller {
             }
         }
 
-        if(input.keyIsDown('f', "Add Frame")){
+        if(input.onIsDown('f', "Add Frame")){
             animation.addFrame(cam.getImage());
         }
 
-        if(input.keyIsDown('r', "Replace Frame")){
+        if(input.onIsDown('r', "Replace Frame")){
             animation.replaceFrame(cam.getImage());
         }
 
-        if(input.keyIsDown('p', "Project Camera Input")){
+        if(input.onIsDown('p', "Project Camera Input")){
             project = !project;
         }
 
-        if(input.keyIsDown('o', "Activate Onion Skin")){
+        if(input.onIsDown('o', "Activate Onion Skin")){
             onion = !onion;
         }
 
-        if(input.keyIsDown('x', "Delete Frame")){
+        if(input.onIsDown('x', "Delete Frame")){
             animation.removeFrame(animation.caretPos);
         }
 
-
-        if(input.keyIsDown('h', "Black Screen")){
+        if(input.onIsDown('h', "Black Screen")){
             renderer.black = !renderer.black;
         }
 
-        if (input.keyIsDown('s', "Save")){
+        if (input.onIsDown('s', "Save")){
             save(saveSystem);
         }
-        if (input.keyIsDown('l', "Load")) {
+        if (input.onIsDown('l', "Load")) {
             load(saveSystem);
         }
 
@@ -168,14 +167,13 @@ public class AnimatingController extends Controller {
                     animation.makeFrame(image, name)
             );
         }
-
     }
 
     private void drawThumbsBar(PApplet p){
 
         PImage[] thumbs = new PImage[7];
         int index = 0;
-        for (int i = animation.caretPos - 3; i < animation.caretPos + 3; i++) {
+        for (int i = animation.caretPos - 3; i < animation.caretPos + 4; i++) {
             thumbs[index] = animation.getThumbnail(i);
             index ++;
         }
@@ -185,6 +183,7 @@ public class AnimatingController extends Controller {
         for (int j = 0; j < box.pixels.length; j++) {
             box.pixels[j] = p.color(255,0,0);
         }
+
         box.updatePixels();
         renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, 15);
 

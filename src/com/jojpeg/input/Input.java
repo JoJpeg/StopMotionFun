@@ -21,6 +21,7 @@ public abstract class Input {
         public static int DOWN = 40;
         public static int LEFT = 37;
     }
+
     public static class Modifier{
         public static int SHIFT = 16;
         public static int CTRL = 17;
@@ -28,14 +29,13 @@ public abstract class Input {
     }
 
     static int[] keyCodes;
+    static int[] keyCodesDown;
     static char[] chars;
+    static char[] charsDown;
+
     public static HashMap<String, String> actionInformations;
     static int lastKey;
-    static int lastChar;
-
-//    static int lastKey;
-//    static char currKey;
-//    static boolean keyIsDown;
+    static char lastChar;
 
     Input(){
         keyCodes = new int[10];
@@ -61,6 +61,45 @@ public abstract class Input {
     public boolean keyIsUp(char key, String actionInfo){
         actionInformations.put(key+"", actionInfo);
         return lastKey == key;
+    }
+
+    /***
+     *
+     * @param key to check if up
+     * @param actionInfo to access the keyStroke intention
+     * @return key is up
+     */
+    public boolean keyIsUp(int key, String actionInfo){
+        String actionKey = getKeyCodeName(key);
+        String keyName = actionKey != null? actionKey : key + "";
+
+        actionInformations.put(keyName+"", actionInfo);
+        return lastKey == key;
+    }
+
+    /***
+     *
+     * @param key to check if pressed
+     * @param actionInfo to access the keyStroke intention
+     * @return key is pressed
+     */
+    public boolean onIsDown(char key, String actionInfo){
+        actionInformations.put(key+"", actionInfo);
+        return onCharIsDown(key);
+    }
+
+    /***
+     *
+     * @param key to check if pressed
+     * @param actionInfo to access the keyStroke intention
+     * @return key is pressed
+     */
+    public boolean onIsDown(int key, String actionInfo){
+        String actionKey = getKeyCodeName(key);
+        String keyName = actionKey != null? actionKey : key + "";
+
+        actionInformations.put(keyName, actionInfo);
+        return onCodeIsDown(key);
     }
 
     /***
@@ -119,6 +158,22 @@ public abstract class Input {
         return false;
     }
 
+    private boolean onCharIsDown(char key){
+        for (int i = 0; i < charsDown.length; i++) {
+            char k = charsDown[i];
+            if(k == key){
+                return onCodeIsDown(keyCodesDown[i]);
+            }
+        }
+        return false;
+    }
+
+    private boolean onCodeIsDown(int keyCode){
+        for (int k : keyCodesDown) {
+            if (keyCode == k) return true;
+        }
+        return false;
+    }
 
     public boolean keyIsDown(){
         for (int key : keyCodes) {
@@ -137,9 +192,11 @@ public abstract class Input {
 
     public void released(int k){
         int i = getIndexOf(k);
+        lastKey = keyCodes[i];
+        lastChar = chars[i];
         chars[i] = 0;
         keyCodes[i] = 0;
-        lastKey = k;
+
         //showKeys();
     }
 
@@ -149,12 +206,18 @@ public abstract class Input {
 
 //            chars[i] = chars[0];
             chars[i] = key;
-
+            charsDown[i] = key;
 //            keyCodes[i] = keyCodes[0];
             keyCodes[i] = code;
+            keyCodesDown[i] = code;
 
             //showKeys();
         }
+    }
+
+    public static void clearDownEvents(){
+        keyCodesDown = new int[10];
+        charsDown = new char[10];
     }
 
     /*
@@ -237,6 +300,8 @@ public abstract class Input {
 
         return  null;
     }
+
+
 
 }// end Input
 

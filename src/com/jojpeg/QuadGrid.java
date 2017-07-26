@@ -40,14 +40,12 @@ public class QuadGrid {
         for (int col = 0; col <= nbrCols; col++)
             for (int row = 0; row <= nbrRows; row++)
                 vertexPoints[col][row] = new VPoint(col * deltaU, row * deltaV);
-        setCorners(0, 0, renderWidth, 0, renderWidth, renderHeight, 0, renderHeight);
 
     }
 
-    public void setCorners(float[] vx, float[] vy){
+    private void setCorners(float[] vx, float[] vy){
         setCorners(vx[0], vy[0], vx[1], vy[1], vx[2], vy[2], vx[3], vy[3] );
     }
-
 
     public void UpdateCorners(){
         setCorners(model.cornersX, model.cornersY);
@@ -57,7 +55,7 @@ public class QuadGrid {
      * Calculate all the quad coordinates
      * Vetices in order TL, TR, BR, BL
      */
-    public void setCorners(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
+    private void setCorners(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
         if (vertexPoints == null) return;
 
         float sx = PApplet.map(model.shift[0],0, renderWidth, 0, 1 );
@@ -120,12 +118,42 @@ public class QuadGrid {
         }
     }
 
-    public float[] getCornersX(){
-        return model.cornersX;
+    public float getCornerX(int index){
+        return model.cornersX[index];
     }
 
-    public float[] getCornersY(){
-        return model.cornersY;
+    public void setCornerX(int index, float value){
+        model.cornersX[index] = value;
+        UpdateCorners();
+    }
+
+    public float getCornerY(int index){
+        return model.cornersY[index];
+    }
+
+    public void setCornerY(int index, float value){
+        model.cornersY[index] = value;
+        UpdateCorners();
+    }
+
+    public void setCorner(int index, float x, float y){
+        setCornerX(index, x);
+        setCornerY(index, y);
+
+    }
+
+    public void setShift(float x, float y){
+        model.shift[0] = x;
+        model.shift[1] = y;
+        UpdateCorners();
+    }
+
+    public float getShiftX(){
+        return model.shift[0];
+    }
+
+    public float getShiftY(){
+        return model.shift[1];
     }
 
     private class VPoint {

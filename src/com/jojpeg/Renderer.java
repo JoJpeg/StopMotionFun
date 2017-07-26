@@ -3,7 +3,9 @@ package com.jojpeg;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import sun.util.resources.cldr.ar.CalendarData_ar_YE;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +23,6 @@ public class Renderer {
 
     ArrayList<Layer> layers = new ArrayList<>();
 
-
     class Layer{
         PImage frame;
         int opacity = 255;
@@ -33,6 +34,12 @@ public class Renderer {
         // renderWidth, renderHeight, nbr slices accross, nbr slices down
 
         plane = new QuadGrid(width, height, 10, 10);
+        plane.setCorner(0,0,0);
+        plane.setCorner(1, p.width,0);
+        plane.setCorner(2, p.width, p.height);
+        plane.setCorner(3,0, p.height);
+        plane.setShift(p.width/2, p.height/2);
+
         canvas = p.createGraphics(plane.renderWidth, plane.renderHeight);
         canvas.beginDraw();
         canvas.clear();
@@ -74,8 +81,6 @@ public class Renderer {
         layers.clear();
     }
 
-
-
     public static PImage makeImage(PGraphics img, PApplet p) {
         img = p.createGraphics(640, 480, p.P2D);
         img.beginDraw();
@@ -116,8 +121,8 @@ public class Renderer {
     }
 
     public void drawOnCanvas(PImage frame, int x, int y){
-        if(this.layers.get(0) == null){
-            setFrame(frame);
+        if(this.layers.size() == 0 || this.layers.get(0) == null){
+            setFrame(NullImage);
             return;
         }
 //        if(canvas.pixels != null) canvas.clear();
