@@ -6,13 +6,14 @@ import com.jojpeg.Renderer;
 import com.jojpeg.SaveSystem;
 import com.jojpeg.input.Input;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 /**
  * Created by J4ck on 18.07.2017.
  */
 public class ProjectionController extends Controller {
-    int projectionMoveIndex = 1;
+    private int projectionMoveIndex = 1;
     Renderer renderer;
     SaveSystem saveSystem;
     QuadGrid plane;
@@ -38,7 +39,6 @@ public class ProjectionController extends Controller {
 
     @Override
     public void processInput(Input input) {
-
         if(input.keyIsDown(Input.Key.UP, "Selected Corner Up")){
             movePlaneAnchor(new PVector(0,-1));
         }
@@ -75,6 +75,10 @@ public class ProjectionController extends Controller {
             projectionMoveIndex = 4;
         }
 
+        if(input.keyIsDown('6', "Thumbs Position")){
+            projectionMoveIndex = 5;
+        }
+
         if(input.keyIsDown('c',"Rotate View")){
             renderer.rotate();
         }
@@ -94,7 +98,6 @@ public class ProjectionController extends Controller {
 
             float x = plane.getCornerX(i);
             float y = plane.getCornerY(i);
-
 
             if(i == projectionMoveIndex) {
                 p.stroke(0,0,255);
@@ -135,6 +138,35 @@ public class ProjectionController extends Controller {
         p.text("5", x, y);
         p.point(x, y);
 
+        x = plane.renderWidth/2;
+        y = AnimatingController.thumbsPosition;
+
+        if(projectionMoveIndex == 5) {
+            p.stroke(0,0,255);
+        }
+        else {
+            p.stroke(0);
+        }
+
+        p.strokeWeight(40);
+        p.point(x, y);
+
+        p.stroke(255);
+        p.fill(255);
+
+        p.strokeWeight(8);
+        p.text("(6) ThumbsPos", x, y);
+        p.point(x, y);
+
+        PImage box = p.createImage(111,111, p.RGB);
+        box.loadPixels();
+        for (int j = 0; j < box.pixels.length; j++) {
+            box.pixels[j] = p.color(255,0,0);
+        }
+
+        box.updatePixels();
+        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, AnimatingController.thumbsPosition - 5);
+
     }
 
     private void movePlaneAnchor(PVector value) {
@@ -147,6 +179,9 @@ public class ProjectionController extends Controller {
                 float x = plane.getShiftX();
                 float y = plane.getShiftY();
                 plane.setShift(x + value.x, y + value.y);
+            }
+            if(projectionMoveIndex == 5){
+                AnimatingController.thumbsPosition += (int)value.y;
             }
         }
     }

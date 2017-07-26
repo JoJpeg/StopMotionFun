@@ -61,7 +61,12 @@ public class ProcessingCore extends PApplet {
     public void keyPressed(){
         input.newKey(keyCode, key) ;
         if(input.keyIsDown(Input.Key.TAB, "Select Mode")){
-            currentController = modeController;
+            if(currentController == animatingController) {
+                currentController = modeController;
+            }
+            else {
+                currentController = animatingController;
+            }
         }
         println("____");
         println(key + "  KeyCode: " + keyCode + " -> (char):" + (char)keyCode);

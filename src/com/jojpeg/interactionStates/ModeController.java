@@ -37,7 +37,6 @@ public class ModeController extends Controller {
          y = 50;
 
         for(String key : Input.actionInformations.keySet()){
-
             p.text(key + " : " + Input.actionInformations.get(key), 20, y);
             y += textSize + padding;
         }
@@ -45,10 +44,6 @@ public class ModeController extends Controller {
 
     @Override
     public void processInput(Input input) {
-
-        if(input.keyIsDown('a', "Go to Animating")){
-            core.setCurrentController(ProcessingCore.animatingController);
-        }
 
         if(input.keyIsDown('m', "Switch To Projection Movement")){
             core.setCurrentController(ProcessingCore.projectionController);

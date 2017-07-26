@@ -19,6 +19,8 @@ public class AnimatingController extends Controller {
     Cam cam;
     SaveSystem saveSystem;
 
+    public static int thumbsPosition = 14;
+
     int onionFront = 1;
     int onionBack = 1;
 
@@ -185,12 +187,12 @@ public class AnimatingController extends Controller {
         }
 
         box.updatePixels();
-        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, 15);
+        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, thumbsPosition - 5);
 
         for (int i = 0; i < thumbs.length; i++) {
             PImage t = thumbs[i];
             int x = (renderer.getPlane().renderWidth / 2 - 385) + (i * 110);
-            int y = 20;
+            int y = thumbsPosition;
             if(t == null){
                 t = p.createImage(100,100, p.RGB);
                 t.loadPixels();
