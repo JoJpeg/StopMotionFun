@@ -106,7 +106,7 @@ public class ProjectionController extends Controller {
         p.text("(6) ThumbsPos", x, y);
         p.point(x, y);
 
-        PImage box = p.createImage(111,111, p.RGB);
+        PImage box = p.createImage(400,111, p.RGB);
         box.loadPixels();
         for (int j = 0; j < box.pixels.length; j++) {
             box.pixels[j] = p.color(255,0,0);

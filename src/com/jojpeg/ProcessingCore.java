@@ -48,7 +48,7 @@ public class ProcessingCore extends PApplet {
 
         setCurrentController(animatingController);
 
-        Input.defaultActions.add(new  Action(Input.Key.TAB, "Select Mode"){
+        Input.defaultActions.add(new  Action(Input.Key.BACKSPACE, "Select Mode"){
             @Override
             public void Invoke() {
                 if (currentController == animatingController) {
@@ -72,15 +72,13 @@ public class ProcessingCore extends PApplet {
 
 
     public void keyPressed(){
-        if(key==27) key=0;
         input.newKey(keyCode, key) ;
         input.update();
         println("____");
         println(key + "  KeyCode: " + keyCode + " -> (char):" + (char)keyCode);
         println(key + "  (int): " + (int) key);
         println(input.keys());
-        //aprintln(value + "  (KeyStroke): " + (int)KeyCode.getKeyCode(value));
-
+        key = 0; // Prevent ESC key to be registered
     }
 
     public void keyReleased() {

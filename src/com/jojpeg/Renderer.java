@@ -57,7 +57,10 @@ public class Renderer {
             return;
         }
 
-        if(layers.size() == 0 || layers.get(0) == null) setFrame(NullImage);
+        if(layers.size() == 0 || layers.get(0) == null) {
+            setFrame(NullImage);
+            System.out.println("Set Base to NullFrame");
+        }
         p.background(137);
 
         for (Layer layer : layers) {
@@ -78,9 +81,9 @@ public class Renderer {
         }
         p.strokeWeight(5);
         p.point(plane.model.shift[0], plane.model.shift[1]);
-        Layer base = layers.get(0);
-        layers.clear();
-        layers.add(base);
+//        Layer base = layers.get(0);
+//        layers.clear();
+//        layers.add(base);
     }
 
     public static PImage makeImage(PGraphics img, PApplet p) {

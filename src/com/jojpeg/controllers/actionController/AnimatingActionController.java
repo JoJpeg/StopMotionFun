@@ -19,7 +19,6 @@ public class AnimatingActionController extends ActionController {
         public void Invoke() {
             controller.animation.caretLeft();
         }
-
     };
 
     public Action caretRight =   new Action(Input.Key.RIGHT, "Caret Right"){

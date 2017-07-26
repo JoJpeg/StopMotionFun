@@ -22,6 +22,7 @@ public abstract class Input {
     public static class Key{
         public static int ESC = 27;
         public static int SPACE = 32;
+        public static int BACKSPACE = 8;
         public static int TAB = 9;
         public static int UP = 38;
         public static int RIGHT = 39;
