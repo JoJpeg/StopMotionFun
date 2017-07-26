@@ -90,7 +90,8 @@ public class Animation {
     }
 
     public void replaceFrame(PImage frame){
-        frames.set(caretPos, new Frame(frame, "frame" + caretPos));
+        if(frames.size() > 0) frames.set(caretPos, new Frame(frame, "frame" + caretPos));
+        else addFrame(frame);
     }
 
     public void removeFrame(int index){
@@ -139,6 +140,7 @@ public class Animation {
 
     }
 
+
     public void caretLeft(){
         caretPos --;
         if(caretPos < 0) caretPos = frames.size() - 1;
@@ -164,6 +166,8 @@ public class Animation {
 
         return model;
     }
+
+
 
     public ArrayList<Frame> getFrames() {
         return frames;

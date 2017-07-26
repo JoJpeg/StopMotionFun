@@ -1,11 +1,13 @@
 package com.jojpeg;
 
+import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 import com.jojpeg.input.KeyBoardInput;
-import com.jojpeg.interactionStates.AnimatingController;
-import com.jojpeg.interactionStates.Controller;
-import com.jojpeg.interactionStates.ModeController;
-import com.jojpeg.interactionStates.ProjectionController;
+import com.jojpeg.controllers.AnimatingController;
+import com.jojpeg.controllers.Controller;
+import com.jojpeg.controllers.ModeController;
+import com.jojpeg.controllers.ProjectionController;
+import com.jojpeg.input.NumPadInput;
 import processing.core.PApplet;
 
 /**
@@ -18,7 +20,7 @@ public class ProcessingCore extends PApplet {
     private Controller currentController;
     public static ProjectionController projectionController;
     public static AnimatingController animatingController;
-    private ModeController modeController;
+    public static ModeController modeController;
 
     @Override
     public void settings() {
@@ -31,7 +33,7 @@ public class ProcessingCore extends PApplet {
         Cam cam = new Cam(this);
         Animation animation = new Animation(this);
 
-        input = new KeyBoardInput();
+        input = new NumPadInput();
 
 //        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
 //        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
@@ -43,14 +45,25 @@ public class ProcessingCore extends PApplet {
         projectionController = new ProjectionController(renderer, saveSystem);
         animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
         modeController = new ModeController(this, new Controller[]{projectionController, modeController});
-        setCurrentController(modeController);
+
+        setCurrentController(animatingController);
+
+        Input.defaultActions.add(new  Action(Input.Key.TAB, "Select Mode"){
+            @Override
+            public void Invoke() {
+                if (currentController == animatingController) {
+                    setCurrentController(modeController);
+                } else {
+                    setCurrentController(animatingController);
+                }
+            }
+        });
     }
 
     public void draw() {
         background(136);
         currentController.update(this);
         renderer.draw(this);
-        currentController.processInput(input);
         stroke(0,0,0);
         currentController.lateUpdate(this);
         input.draw(this);
@@ -59,30 +72,25 @@ public class ProcessingCore extends PApplet {
 
 
     public void keyPressed(){
+        if(key==27) key=0;
         input.newKey(keyCode, key) ;
-        if(input.keyIsDown(Input.Key.TAB, "Select Mode")){
-            if(currentController == animatingController) {
-                currentController = modeController;
-            }
-            else {
-                currentController = animatingController;
-            }
-        }
+        input.update();
         println("____");
         println(key + "  KeyCode: " + keyCode + " -> (char):" + (char)keyCode);
         println(key + "  (int): " + (int) key);
-        println(input.showKeys());
-        //aprintln(key + "  (KeyStroke): " + (int)KeyCode.getKeyCode(key));
+        println(input.keys());
+        //aprintln(value + "  (KeyStroke): " + (int)KeyCode.getKeyCode(value));
 
     }
 
     public void keyReleased() {
 //        Toolkit.getDefaultToolkit().beep();
         input.released(keyCode);
+
     }
 
     public void setCurrentController(Controller currentController) {
         this.currentController = currentController;
-        currentController.processInput(input);
+        input.addActions(currentController.getActionController());
     }
 }

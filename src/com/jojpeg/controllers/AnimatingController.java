@@ -1,7 +1,6 @@
-package com.jojpeg.interactionStates;
+package com.jojpeg.controllers;
 
 import com.jojpeg.*;
-import com.jojpeg.input.Input;
 import gifAnimation.GifMaker;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -18,6 +17,7 @@ public class AnimatingController extends Controller {
     Renderer renderer;
     Cam cam;
     SaveSystem saveSystem;
+    AnimatingActionController actionController = new AnimatingActionController(this);
 
     public static int thumbsPosition = 14;
 
@@ -65,61 +65,6 @@ public class AnimatingController extends Controller {
     }
 
     @Override
-    public void processInput(Input input) {
-
-        if(input.onIsDown(Input.Key.LEFT, "Caret Left")){
-            animation.caretLeft();
-        }
-
-        if(input.onIsDown(Input.Key.RIGHT, "Caret Right")){
-            animation.caretRight();
-        }
-
-        if(input.onIsDown(Input.Key.SPACE, "Play/Stop")){
-            play = !play;
-            if(play) {
-                onion = false;
-                p.frameRate(Animation.fps);
-            }
-            else {
-                p.frameRate(60);
-            }
-        }
-
-        if(input.onIsDown('f', "Add Frame")){
-            animation.addFrame(cam.getImage());
-        }
-
-        if(input.onIsDown('r', "Replace Frame")){
-            animation.replaceFrame(cam.getImage());
-        }
-
-        if(input.onIsDown('p', "Project Camera Input")){
-            project = !project;
-        }
-
-        if(input.onIsDown('o', "Activate Onion Skin")){
-            onion = !onion;
-        }
-
-        if(input.onIsDown('x', "Delete Frame")){
-            animation.removeFrame(animation.caretPos);
-        }
-
-        if(input.onIsDown('h', "Black Screen")){
-            renderer.black = !renderer.black;
-        }
-
-        if (input.onIsDown('s', "Save")){
-            save(saveSystem);
-        }
-        if (input.onIsDown('l', "Load")) {
-            load(saveSystem);
-        }
-
-    }
-
-    @Override
     public void update(PApplet p) {
 
     }
@@ -129,6 +74,7 @@ public class AnimatingController extends Controller {
         saveSystem.setMessage("Save Animation");
         saveSystem.save(animation.getModel());
         File selection = saveSystem.getLastSelection();
+        if(selection == null) return;
         ArrayList<Animation.Frame> frames = animation.getFrames();
         String parentPath = selection.getParent() + "\\";
         GifMaker gif = new GifMaker(p, parentPath  + "_Anim_" +frames.get(0).getName() + ".gif");
@@ -150,8 +96,8 @@ public class AnimatingController extends Controller {
 
     @Override
     public void load(SaveSystem saveSystem) {
-
         animation.model = (Animation.AnimationModel)saveSystem.load(animation.getModel());
+        if(saveSystem.getLastSelection() == null) return;
         animation.model.path = saveSystem.getLastSelection().getParent() + "\\";
 
         animation.frames.clear();
@@ -207,4 +153,10 @@ public class AnimatingController extends Controller {
             renderer.drawOnCanvas(t, x, y);
         }
     }
+
+    @Override
+    public ActionController<AnimatingActionController> getActionController() {
+        return actionController;
+    }
+
 }

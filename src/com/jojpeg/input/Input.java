@@ -1,8 +1,15 @@
+/*TODO:
+    CustomInput class, that loads a json with user defined Input Strokes
+*/
+
 package com.jojpeg.input;
 
+import com.jojpeg.controllers.ActionController;
 import processing.core.PApplet;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -11,6 +18,7 @@ import java.util.HashMap;
 public abstract class Input {
 
     protected int drawGUI = Modifier.ALT;
+
 
     public static class Key{
         public static int ESC = 27;
@@ -33,118 +41,108 @@ public abstract class Input {
     static char[] chars;
     static char[] charsDown;
 
-    public static HashMap<String, String> actionInformations;
     static int lastKey;
     static char lastChar;
+
+    public static ArrayList<Action> defaultActions = new ArrayList<>();
+    public static ArrayList<Action> actions = new ArrayList<>();
+    static HashMap<ActionController, ArrayList<Action>> actionMap = new HashMap<>();
 
     Input(){
         keyCodes = new int[10];
         chars = new char[10];
-        actionInformations = new HashMap<>();
+        actions = new ArrayList<>();
+    }
+
+    public void update() {
+        ArrayList<Action> actionList = new ArrayList<>();
+        actionList.addAll(defaultActions);
+        actionList.addAll(actions);
+
+
+        for (Action action : actionList){
+            if(action.continous){
+                if(keyIsDown(action.key.value)) {
+                    action.Invoke();
+                }
+            }else {
+                if(onIsDown(action.key.value)){
+                    action.Invoke();
+                }
+            }
+        }
     }
 
     public void draw(PApplet p){
         if(keyCodeIsDown(drawGUI)){
             drawGUI(p);
         }
-        actionInformations.clear();
     }
 
     protected abstract void drawGUI(PApplet p);
-
-    /***
-     *
-     * @param key to check if up
-     * @param actionInfo to access the keyStroke intention
-     * @return key is up
-     */
-    public boolean keyIsUp(char key, String actionInfo){
-        actionInformations.put(key+"", actionInfo);
-        return lastKey == key;
-    }
-
-    /***
-     *
-     * @param key to check if up
-     * @param actionInfo to access the keyStroke intention
-     * @return key is up
-     */
-    public boolean keyIsUp(int key, String actionInfo){
-        String actionKey = getKeyCodeName(key);
-        String keyName = actionKey != null? actionKey : key + "";
-
-        actionInformations.put(keyName+"", actionInfo);
-        return lastKey == key;
-    }
-
-    /***
-     *
-     * @param key to check if pressed
-     * @param actionInfo to access the keyStroke intention
-     * @return key is pressed
-     */
-    public boolean onIsDown(char key, String actionInfo){
-        actionInformations.put(key+"", actionInfo);
-        return onCharIsDown(key);
-    }
-
-    /***
-     *
-     * @param key to check if pressed
-     * @param actionInfo to access the keyStroke intention
-     * @return key is pressed
-     */
-    public boolean onIsDown(int key, String actionInfo){
-        String actionKey = getKeyCodeName(key);
-        String keyName = actionKey != null? actionKey : key + "";
-
-        actionInformations.put(keyName, actionInfo);
-        return onCodeIsDown(key);
-    }
-
-    /***
-     *
-     * @param key to check if pressed
-     * @param actionInfo to access the keyStroke intention
-     * @return key is pressed
-     */
-    public boolean keyIsDown(char key, String actionInfo){
-        actionInformations.put(key+"", actionInfo);
-        return keyCharIsDown(key);
-    }
-
-    /***
-     *
-     * @param key to check if pressed
-     * @param actionInfo to access the keyStroke intention
-     * @return key is pressed
-     */
-    public boolean keyIsDown(int key, String actionInfo){
-        String actionKey = getKeyCodeName(key);
-        String keyName = actionKey != null? actionKey : key + "";
-
-        actionInformations.put(keyName, actionInfo);
-        return keyCodeIsDown(key);
-    }
+    public abstract void translate();
 
     /***
      *
      * @param key to check if pressed
      * @param modifier  to check if pressed
      * @param actionInfo to access the keyStroke intention
-     * @return key combination is pressed
+     * @return value combination is pressed
      */
-    public boolean keyComboIsDown(char key, int modifier, String actionInfo){
-        actionInformations.put(key + "+" + modifier, actionInfo);
+    private boolean keyComboIsDown(char key, int modifier, String actionInfo){
+//        actions.put(value + "+" + modifier, actionInfo);
         boolean keyDown = keyCharIsDown(key);
         boolean modifierDown = keyCodeIsDown(modifier);
         return keyDown && modifierDown;
+    }
+
+    /***
+     *
+     * @param key to check if up
+     * @return value is up
+     */
+    public boolean keyIsUp(char key){
+        return lastKey == key;
+    }
+
+    /***
+     *
+     * @param key to check if up
+     * @return value is up
+     */
+    public boolean keyIsUp(int key){
+        return lastKey == key;
+    }
+
+    /***
+     *
+     * @param key to check if pressed
+     * @return value is pressed
+     */
+    public boolean onIsDown(Object key){
+        if(key.getClass().equals(Character.class))return onCharIsDown((char)key);
+        if(key.getClass().equals(Integer.class))return onCodeIsDown((int)key);
+        System.out.println("ERROR: False type: " + key.getClass());
+        return false;
+    }
+
+    /***
+     *
+     * @param key to check if pressed
+     * @return value is pressed
+     */
+    public boolean keyIsDown(Object key){
+        if(key.getClass().equals(Character.class)) return keyCharIsDown((char)key);
+        if(key.getClass().equals(Integer.class))return keyCodeIsDown((int)key);
+        System.out.println("ERROR: False type: " + key.getClass());
+        return false;
     }
 
     private boolean keyCharIsDown(char key){
         for (int i = 0; i < chars.length; i++) {
             char k = chars[i];
             if(k == key){
+                System.out.println(k + " = " + key);
                 return keyCodeIsDown(keyCodes[i]);
             }
         }
@@ -158,16 +156,6 @@ public abstract class Input {
         return false;
     }
 
-    private boolean onCharIsDown(char key){
-        for (int i = 0; i < charsDown.length; i++) {
-            char k = charsDown[i];
-            if(k == key){
-                return onCodeIsDown(keyCodesDown[i]);
-            }
-        }
-        return false;
-    }
-
     private boolean onCodeIsDown(int keyCode){
         for (int k : keyCodesDown) {
             if (keyCode == k) return true;
@@ -175,20 +163,16 @@ public abstract class Input {
         return false;
     }
 
-    public boolean keyIsDown(){
-        for (int key : keyCodes) {
-            if (key != 0) return true;
+    private boolean onCharIsDown(char key){
+        for (int i = 0; i < charsDown.length; i++) {
+            char k = chars[i];
+            if(k == key){
+                System.out.println(k + " = " + key);
+                return onCodeIsDown(keyCodesDown[i]);
+            }
         }
         return false;
     }
-
-    boolean mouseIsDown(int i){
-        for (int key : keyCodes) {
-            if (key == '`') return true;
-        }
-        return false;
-    }
-
 
     public void released(int k){
         int i = getIndexOf(k);
@@ -196,8 +180,7 @@ public abstract class Input {
         lastChar = chars[i];
         chars[i] = 0;
         keyCodes[i] = 0;
-
-        //showKeys();
+        //keys();
     }
 
     public void newKey(int code, char key){
@@ -211,7 +194,7 @@ public abstract class Input {
             keyCodes[i] = code;
             keyCodesDown[i] = code;
 
-            //showKeys();
+            //keys();
         }
     }
 
@@ -219,23 +202,6 @@ public abstract class Input {
         keyCodesDown = new int[10];
         charsDown = new char[10];
     }
-
-    /*
-    public PVector getDir(char[] keys) {
-        PVector dir = new PVector(0,0);
-        int up = keys[0];
-        int down = keys[1];
-        int left = keys[2];
-        int right = keys[3];
-
-        if (keyIsDown(up)) dir.y = -1;
-        else if (keyIsDown(down)) dir.y = 1;
-        if (keyIsDown(left)) dir.x = -1;
-        else if (keyIsDown(right)) dir.x = 1;
-
-        return dir;
-    }
-    */
 
     boolean isNewEntry(int k){
         for (int i = 0; i < keyCodes.length; ++i) {
@@ -258,18 +224,18 @@ public abstract class Input {
         return -1;
     }
 
-    public String showKeys(){
+    public String keys(){
         return (
-                 keyCodes[0] + "|"
-                + keyCodes[1] + "|"
-                + keyCodes[2] + "|"
-                + keyCodes[3] + "|"
-                + keyCodes[4] + "|"
-                + keyCodes[5] + "|"
-                + keyCodes[6] + "|"
-                + keyCodes[7] + "|"
-                + keyCodes[8] + "|"
-                + keyCodes[9]
+                  chars[0] + "|"
+                + chars[1] + "|"
+                + chars[2] + "|"
+                + chars[3] + "|"
+                + chars[4] + "|"
+                + chars[5] + "|"
+                + chars[6] + "|"
+                + chars[7] + "|"
+                + chars[8] + "|"
+                + chars[9]
         );
     }
 
@@ -299,6 +265,38 @@ public abstract class Input {
         }
 
         return  null;
+    }
+
+    private void registerActionController(ActionController controller){
+
+        ArrayList<Action> newActions = new ArrayList<>();
+        Field[] fields = controller.getClass().getFields();
+
+        for (Field field : fields){
+            try {
+                System.out.println("Registered Action: " + field.getName());
+                if(field.getType().equals(Action.class)){
+                    newActions.add((Action)field.get(controller));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        actionMap.put(controller,newActions);
+        actions = newActions;
+        System.out.println("Actions size: " + actions.size());
+    }
+
+    public void addActions(ActionController controller){
+        if(actionMap.containsKey(controller)){
+            System.out.println("Adding existing actions of " + controller);
+            actions = actionMap.get(controller);
+        }else {
+            System.out.println("Registering actions of " + controller);
+            registerActionController(controller);
+        }
+
+        translate();
     }
 
 

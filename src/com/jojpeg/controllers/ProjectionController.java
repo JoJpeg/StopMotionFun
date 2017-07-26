@@ -1,22 +1,23 @@
-package com.jojpeg.interactionStates;
+package com.jojpeg.controllers;
 
 
 import com.jojpeg.QuadGrid;
 import com.jojpeg.Renderer;
 import com.jojpeg.SaveSystem;
-import com.jojpeg.input.Input;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
+
 
 /**
  * Created by J4ck on 18.07.2017.
  */
 public class ProjectionController extends Controller {
-    private int projectionMoveIndex = 1;
+    protected int projectionMoveIndex = 1;
     Renderer renderer;
     SaveSystem saveSystem;
     QuadGrid plane;
+    ProjectionActionController actionController = new ProjectionActionController(this);
 
     public ProjectionController(Renderer renderer, SaveSystem saveSystem) {
         this.renderer = renderer;
@@ -35,61 +36,6 @@ public class ProjectionController extends Controller {
     @Override
     public void lateUpdate(PApplet p) {
         drawUI(p);
-    }
-
-    @Override
-    public void processInput(Input input) {
-        if(input.keyIsDown(Input.Key.UP, "Selected Corner Up")){
-            movePlaneAnchor(new PVector(0,-1));
-        }
-
-        if(input.keyIsDown(Input.Key.DOWN, "Selected Corner Up")){
-            movePlaneAnchor(new PVector(0,1));
-        }
-
-        if(input.keyIsDown(Input.Key.LEFT, "Selected Corner Up")){
-            movePlaneAnchor(new PVector(-1,0));
-        }
-
-        if(input.keyIsDown(Input.Key.RIGHT, "Selected Corner Up")){
-            movePlaneAnchor(new PVector(1,0));
-        }
-
-        if(input.keyIsDown('1', "Move Corner 1")){
-            projectionMoveIndex = 0;
-        }
-
-        if(input.keyIsDown('2', "Move Corner 2")){
-            projectionMoveIndex = 1;
-        }
-
-        if(input.keyIsDown('3', "Move Corner 3")){
-            projectionMoveIndex = 2;
-        }
-
-        if(input.keyIsDown('4', "Move Corner 4")){
-            projectionMoveIndex = 3;
-        }
-
-        if(input.keyIsDown('5', "Shift Perspective")){
-            projectionMoveIndex = 4;
-        }
-
-        if(input.keyIsDown('6', "Thumbs Position")){
-            projectionMoveIndex = 5;
-        }
-
-        if(input.keyIsDown('c',"Rotate View")){
-            renderer.rotate();
-        }
-
-        if (input.keyIsDown('s', "Save")){
-            save(saveSystem);
-        }
-
-        if (input.keyIsDown('l', "Load")){
-            load(saveSystem);
-        }
     }
 
     private void drawUI(PApplet p){
@@ -169,7 +115,7 @@ public class ProjectionController extends Controller {
 
     }
 
-    private void movePlaneAnchor(PVector value) {
+    protected void movePlaneAnchor(PVector value) {
         if (projectionMoveIndex <= 3) {
             float x = plane.getCornerX(projectionMoveIndex);
             float y = plane.getCornerY(projectionMoveIndex);
@@ -195,5 +141,10 @@ public class ProjectionController extends Controller {
     public void load(SaveSystem saveSystem) {
         plane.model = (QuadGrid.QuadModel)saveSystem.load(plane.model);
         plane.UpdateCorners();
+    }
+
+    @Override
+    public ActionController<ProjectionActionController> getActionController() {
+        return actionController;
     }
 }

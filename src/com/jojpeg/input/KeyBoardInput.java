@@ -1,6 +1,8 @@
 package com.jojpeg.input;
 
-import com.sun.deploy.util.StringUtils;
+
+import com.jojpeg.ProcessingCore;
+import com.jojpeg.controllers.Controller;
 import processing.core.PApplet;
 
 /**
@@ -12,9 +14,25 @@ public class KeyBoardInput extends Input {
     }
 
     @Override
+    public void translate() {
+
+    }
+
+    @Override
     protected void drawGUI(PApplet p) {
-        for(String key : actionInformations.keySet()){
-            System.out.println(key+ " : " + actionInformations.get(key));
+        int textSize = 15;
+        int padding = 5;
+        p.strokeWeight(3);
+        p.textSize(textSize);
+        float y = 50;
+
+        for(Action a : Input.actions){
+            p.fill(0);
+            p.rect(15,y, p.textWidth(a.getKeyName() + 5),20);
+            p.fill(255);
+            p.text(a.getKeyName() + " : " + a.getKeyInfo(), 20, y);
+            y += textSize + padding;
         }
+
     }
 }

@@ -1,19 +1,22 @@
-package com.jojpeg.interactionStates;
+package com.jojpeg.controllers;
 
 import com.jojpeg.ProcessingCore;
 import com.jojpeg.SaveSystem;
+import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 import processing.core.PApplet;
-
-import java.awt.*;
 
 public class ModeController extends Controller {
 
     ProcessingCore core;
     Controller[] controllers;
+    ModeActionController actionController;
+
+
     public ModeController(ProcessingCore core, Controller[] controllers) {
         this.core = core;
         this.controllers = controllers;
+        actionController = new ModeActionController(core);
     }
 
     @Override
@@ -26,27 +29,19 @@ public class ModeController extends Controller {
     public void lateUpdate(PApplet p) {
 
 
-        //TODO: Draw on Plane Canvas (implement "PGraphics beginDraw(); endDraw();" in Renderer)
+        //TODO: Draw on Plane Canvas (implement "PGraphics plane.beginDraw(); plane.endDraw();" in Renderer)
 
         int textSize = 15;
         int padding = 5;
         p.strokeWeight(3);
         p.fill(0);
         p.textSize(textSize);
-        float y = p.height/2 - ((textSize + padding) * Input.actionInformations.keySet().size() / 2);
-         y = 50;
+        float y = 50;
+//                p.height/2 - ((textSize + padding) * Input.actions.keySet().size() / 2);
 
-        for(String key : Input.actionInformations.keySet()){
-            p.text(key + " : " + Input.actionInformations.get(key), 20, y);
+        for(Action a : Input.actions){
+            p.text(a.getKeyName() + " : " + a.getKeyInfo(), 20, y);
             y += textSize + padding;
-        }
-    }
-
-    @Override
-    public void processInput(Input input) {
-
-        if(input.keyIsDown('m', "Switch To Projection Movement")){
-            core.setCurrentController(ProcessingCore.projectionController);
         }
     }
 
@@ -59,5 +54,10 @@ public class ModeController extends Controller {
     @Override
     public void load(SaveSystem saveSystem) {
 
+    }
+
+    @Override
+    public ActionController<ModeActionController> getActionController() {
+        return actionController;
     }
 }
