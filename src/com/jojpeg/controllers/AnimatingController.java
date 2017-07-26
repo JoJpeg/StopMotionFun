@@ -1,6 +1,8 @@
 package com.jojpeg.controllers;
 
 import com.jojpeg.*;
+import com.jojpeg.controllers.actionController.ActionController;
+import com.jojpeg.controllers.actionController.AnimatingActionController;
 import gifAnimation.GifMaker;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,11 +14,11 @@ import java.util.ArrayList;
  * Created by J4ck on 18.07.2017.
  */
 public class AnimatingController extends Controller {
-    PApplet p;
-    Animation animation;
-    Renderer renderer;
-    Cam cam;
-    SaveSystem saveSystem;
+    public PApplet p;
+    public Animation animation;
+    public Renderer renderer;
+    public Cam cam;
+    public SaveSystem saveSystem;
     AnimatingActionController actionController = new AnimatingActionController(this);
 
     public static int thumbsPosition = 14;
@@ -26,9 +28,9 @@ public class AnimatingController extends Controller {
 
     int projectionOpacity = 127;
     int onionOpacity = 127;
-    boolean play = false;
-    boolean project = false;
-    boolean onion = false;
+    public boolean play = false;
+    public boolean project = false;
+    public boolean onion = false;
 
     public AnimatingController(PApplet p, Animation animation, Cam cam, Renderer renderer, SaveSystem saveSystem) {
         this.saveSystem = saveSystem;

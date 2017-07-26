@@ -1,4 +1,4 @@
-package com.jojpeg.controllers;
+package com.jojpeg.controllers.actionController;
 
 import com.jojpeg.ProcessingCore;
 import com.jojpeg.input.Action;

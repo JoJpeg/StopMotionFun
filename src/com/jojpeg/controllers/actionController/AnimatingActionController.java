@@ -1,7 +1,8 @@
-package com.jojpeg.controllers;
+package com.jojpeg.controllers.actionController;
 
 
 import com.jojpeg.Animation;
+import com.jojpeg.controllers.AnimatingController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 

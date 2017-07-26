@@ -4,6 +4,8 @@ package com.jojpeg.controllers;
 import com.jojpeg.QuadGrid;
 import com.jojpeg.Renderer;
 import com.jojpeg.SaveSystem;
+import com.jojpeg.controllers.actionController.ActionController;
+import com.jojpeg.controllers.actionController.ProjectionActionController;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -13,9 +15,9 @@ import processing.core.PVector;
  * Created by J4ck on 18.07.2017.
  */
 public class ProjectionController extends Controller {
-    protected int projectionMoveIndex = 1;
-    Renderer renderer;
-    SaveSystem saveSystem;
+    public int projectionMoveIndex = 1;
+    public Renderer renderer;
+    public SaveSystem saveSystem;
     QuadGrid plane;
     ProjectionActionController actionController = new ProjectionActionController(this);
 
@@ -115,7 +117,7 @@ public class ProjectionController extends Controller {
 
     }
 
-    protected void movePlaneAnchor(PVector value) {
+    public void movePlaneAnchor(PVector value) {
         if (projectionMoveIndex <= 3) {
             float x = plane.getCornerX(projectionMoveIndex);
             float y = plane.getCornerY(projectionMoveIndex);

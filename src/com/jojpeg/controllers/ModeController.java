@@ -2,6 +2,8 @@ package com.jojpeg.controllers;
 
 import com.jojpeg.ProcessingCore;
 import com.jojpeg.SaveSystem;
+import com.jojpeg.controllers.actionController.ActionController;
+import com.jojpeg.controllers.actionController.ModeActionController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 import processing.core.PApplet;

@@ -4,12 +4,11 @@
 
 package com.jojpeg.input;
 
-import com.jojpeg.controllers.ActionController;
+import com.jojpeg.controllers.actionController.ActionController;
 import processing.core.PApplet;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**

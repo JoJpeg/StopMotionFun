@@ -1,4 +1,4 @@
-package com.jojpeg.controllers;
+package com.jojpeg.controllers.actionController;
 
 public class ActionController<T>{
     public T get(){

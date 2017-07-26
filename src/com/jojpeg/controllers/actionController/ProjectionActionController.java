@@ -1,5 +1,6 @@
-package com.jojpeg.controllers;
+package com.jojpeg.controllers.actionController;
 
+import com.jojpeg.controllers.ProjectionController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 import processing.core.PVector;
