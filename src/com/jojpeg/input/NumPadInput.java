@@ -8,6 +8,10 @@ import processing.core.PApplet;
 
 public class NumPadInput extends Input{
 
+    public NumPadInput() {
+        drawGUI = ',';
+    }
+
     @Override
     public void translate() {
         ProjectionController pc = ProcessingCore.projectionController;

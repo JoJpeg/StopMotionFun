@@ -4,6 +4,7 @@
 
 package com.jojpeg.input;
 
+import com.jojpeg.controllers.ModeController;
 import com.jojpeg.controllers.actionController.ActionController;
 import processing.core.PApplet;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
  */
 public abstract class Input {
 
-    protected int drawGUI = Modifier.ALT;
+    protected Object drawGUI = Modifier.ALT;
 
 
     public static class Key{
@@ -74,7 +75,7 @@ public abstract class Input {
     }
 
     public void draw(PApplet p){
-        if(keyCodeIsDown(drawGUI)){
+        if(keyIsDown(drawGUI)){
             drawGUI(p);
         }
     }

@@ -51,6 +51,7 @@ public class Animation {
     }
 
     public PImage play(){
+        if(frames.size() == 0) return null;
         PImage result = frames.get(currentFrameIndex % frames.size()).frame;
         currentFrameIndex++;
         return result;

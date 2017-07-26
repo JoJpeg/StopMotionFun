@@ -120,7 +120,7 @@ public class Renderer {
         layer.frame = frame;
         layer.opacity = opacity;
         if(layers.size() > 0 && layerIndex < layers.size()) {
-            this.layers.add(layerIndex, layer);
+            this.layers.set(layerIndex, layer);
         }
         else layers.add(layer);
     }
