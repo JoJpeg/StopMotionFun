@@ -32,7 +32,7 @@ public class ProcessingCore extends PApplet {
     public void setup() {
 
         println("Initializing Camera...");
-        Cam cam = new Cam(this, true);
+        Cam cam = new Cam(this, false);
         println("Initializing AnimationSystem...");
         Animation animation = new Animation(this);
 
