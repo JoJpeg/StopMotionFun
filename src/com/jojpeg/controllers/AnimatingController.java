@@ -1,8 +1,8 @@
 package com.jojpeg.controllers;
 
 import com.jojpeg.*;
-import com.jojpeg.controllers.actionController.ActionController;
-import com.jojpeg.controllers.actionController.AnimatingActionController;
+import com.jojpeg.controllers.actionController.ActionHandler;
+import com.jojpeg.controllers.actionController.AnimatingActionHandler;
 import gifAnimation.GifMaker;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -19,18 +19,23 @@ public class AnimatingController extends Controller {
     public Renderer renderer;
     public Cam cam;
     public SaveSystem saveSystem;
-    AnimatingActionController actionController = new AnimatingActionController(this);
+    AnimatingActionHandler actionController = new AnimatingActionHandler(this);
 
-    public static int thumbsPosition = 14;
+    public class AnimatingSettings extends Model<AnimatingSettings>{
+        public int thumbsPosition = 14;
+        int onionFront = 1;
+        int onionBack = 1;
 
-    int onionFront = 1;
-    int onionBack = 1;
+        int projectionOpacity = 127;
+        int onionOpacity = 127;
+        public boolean project = false;
+        public boolean onion = false;
+    }
 
-    int projectionOpacity = 127;
-    int onionOpacity = 127;
+    public AnimatingSettings model = new AnimatingSettings();
+
+
     public boolean play = false;
-    public boolean project = false;
-    public boolean onion = false;
 
     public AnimatingController(PApplet p, Animation animation, Cam cam, Renderer renderer, SaveSystem saveSystem) {
         this.saveSystem = saveSystem;
@@ -43,22 +48,22 @@ public class AnimatingController extends Controller {
     @Override
     public void lateUpdate(PApplet p) {
         if(play) {
-            renderer.setFrame(animation.play());
+            renderer.setPlaneFrame(animation.play());
         }
         else {
-            renderer.setFrame(animation.current());
-            if(project) {
-                renderer.setLayer(cam.getRealtime(),1, projectionOpacity);
+            renderer.setPlaneFrame(animation.current());
+            if(model.project) {
+                renderer.setLayer(cam.getRealtime(),1, model.projectionOpacity);
             }
             drawThumbsBar(p);
         }
 
-        if(onion) {
+        if(model.onion) {
             int layer = 1;
-            for (int i = animation.caretPos - onionBack; i < animation.caretPos + onionFront + 1; i++) {
+            for (int i = animation.caretPos - model.onionBack; i < animation.caretPos + model.onionFront + 1; i++) {
                 PImage onion =   animation.getFrame(i);
                 if(onion != null && i != animation.caretPos) {
-                    renderer.setLayer(onion, layer, onionOpacity);
+                    renderer.setLayer(onion, layer, model.onionOpacity);
                     layer ++;
                 }
 
@@ -91,9 +96,7 @@ public class AnimatingController extends Controller {
             gif.setDelay(1000 / Animation.fps);
             gif.addFrame(frame.getImage());
         }
-
         gif.finish();
-
     }
 
     @Override
@@ -119,7 +122,7 @@ public class AnimatingController extends Controller {
         }
     }
 
-    private void drawThumbsBar(PApplet p){
+    public void drawThumbsBar(PApplet p){
 
         PImage[] thumbs = new PImage[7];
         int index = 0;
@@ -135,12 +138,12 @@ public class AnimatingController extends Controller {
         }
 
         box.updatePixels();
-        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, thumbsPosition - 5);
+        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, model.thumbsPosition - 5);
 
         for (int i = 0; i < thumbs.length; i++) {
             PImage t = thumbs[i];
             int x = (renderer.getPlane().renderWidth / 2 - 385) + (i * 110);
-            int y = thumbsPosition;
+            int y = model.thumbsPosition;
             if(t == null){
                 t = p.createImage(100,100, p.RGB);
                 t.loadPixels();
@@ -156,8 +159,9 @@ public class AnimatingController extends Controller {
         }
     }
 
+
     @Override
-    public ActionController<AnimatingActionController> getActionController() {
+    public ActionHandler<AnimatingActionHandler> getActionController() {
         return actionController;
     }
 

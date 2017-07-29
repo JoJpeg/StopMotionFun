@@ -3,9 +3,7 @@ package com.jojpeg;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import sun.util.resources.cldr.ar.CalendarData_ar_YE;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -45,7 +43,7 @@ public class Renderer {
         canvas.clear();
         canvas.endDraw();
         NullImage = makeImage((PGraphics) NullImage, p);
-        setFrame(NullImage);
+        setPlaneFrame(NullImage);
     }
 
     public void draw(PApplet p){
@@ -58,8 +56,7 @@ public class Renderer {
         }
 
         if(layers.size() == 0 || layers.get(0) == null) {
-            setFrame(NullImage);
-            System.out.println("Set Base to NullFrame");
+            setPlaneFrame(NullImage);
         }
         p.background(137);
 
@@ -81,9 +78,7 @@ public class Renderer {
         }
         p.strokeWeight(5);
         p.point(plane.model.shift[0], plane.model.shift[1]);
-//        Layer base = layers.get(0);
-//        layers.clear();
-//        layers.add(base);
+        layers.clear();
     }
 
     public static PImage makeImage(PGraphics img, PApplet p) {
@@ -111,7 +106,7 @@ public class Renderer {
         return img;
     }
 
-    public void setFrame(PImage frame){
+    public void setPlaneFrame(PImage frame){
         if(frame != null) setLayer(frame,0,255);
     }
 
@@ -125,9 +120,21 @@ public class Renderer {
         else layers.add(layer);
     }
 
+    /***
+     * Adds an Layer On Top
+     * @param frame
+     * @param opacity 0 to 255
+     * @return index of the added Layer
+     */
+    public int addLayer(PImage frame, int opacity){
+        int layerIndex = layers.size();
+        setLayer(frame, layerIndex, opacity);
+        return layerIndex;
+    }
+
     public void drawOnCanvas(PImage frame, int x, int y){
         if(this.layers.size() == 0 || this.layers.get(0) == null){
-            setFrame(NullImage);
+            setPlaneFrame(NullImage);
             return;
         }
 //        if(canvas.pixels != null) canvas.clear();
@@ -135,6 +142,14 @@ public class Renderer {
         canvas.image(canvas,0,0);
         canvas.image(frame,x,y);
         canvas.endDraw();
+    }
+
+    public PGraphics getCanvas(){
+        PGraphics result = p.createGraphics(plane.renderWidth, plane.renderHeight);
+        result.beginDraw();
+        result.image(canvas,0,0);
+        result.endDraw();
+        return result;
     }
 
     public void rotate() {

@@ -1,20 +1,21 @@
 package com.jojpeg.input;
 
 import com.jojpeg.ProcessingCore;
+import com.jojpeg.Renderer;
 import com.jojpeg.controllers.AnimatingController;
 import com.jojpeg.controllers.ModeController;
-import com.jojpeg.controllers.ProjectionController;
+import com.jojpeg.controllers.SettingsController;
 import processing.core.PApplet;
 
 public class NumPadInput extends Input{
 
     public NumPadInput() {
-        drawGUI = ',';
+        drawGui.setSecondary(',');
     }
 
     @Override
     public void translate() {
-        ProjectionController pc = ProcessingCore.projectionController;
+        SettingsController pc = ProcessingCore.settingsController;
         AnimatingController ac = ProcessingCore.animatingController;
         ModeController mc = ProcessingCore.modeController;
 
@@ -22,6 +23,7 @@ public class NumPadInput extends Input{
 
         pc.getActionController().get().save.setKey('/');
         pc.getActionController().get().load.setKey('*');
+        pc.getActionController().get().takeFrame.setKey('\n');
 
         ac.getActionController().get().addFrame.setKey('\n');
         ac.getActionController().get().playPause.setKey('+');
@@ -32,27 +34,18 @@ public class NumPadInput extends Input{
         ac.getActionController().get().replaceFrame.setKey('1');
 
         ac.getActionController().get().blackOutScreen.setKey('-');
+
         ac.getActionController().get().caretLeft.setKey('2');
+        ac.getActionController().get().caretLeft.setSecondary(Key.LEFT);
         ac.getActionController().get().caretRight.setKey('3');
+        ac.getActionController().get().caretRight.setSecondary(Key.RIGHT);
+
         ac.getActionController().get().save.setKey('/');
         ac.getActionController().get().load.setKey('*');
     }
 
     @Override
-    protected void drawGUI(PApplet p) {
-        int textSize = 15;
-        int padding = 5;
-        p.strokeWeight(3);
-        p.textSize(textSize);
-        float y = 50;
-
-        for(Action a : Input.actions){
-            p.fill(0);
-            p.rect(15,y, 200,-18);
-            p.fill(255);
-            p.text(a.getKeyName() + " : " + a.getKeyInfo(), 20, y);
-            y += textSize + padding;
-        }
+    protected void drawGUI(PApplet p, Renderer renderer) {
 
     }
 }

@@ -9,7 +9,7 @@ public class QuadGrid {
     private final VPoint[][] vertexPoints;
     public QuadModel model;
     public int renderWidth, renderHeight;
-    public class QuadModel extends Model {
+    public class QuadModel extends Model<QuadModel> {
         public float[] cornersX = {
                 30, 377, 343, 73
         };

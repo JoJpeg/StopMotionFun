@@ -5,6 +5,8 @@ public class Action {
         public T value;
     }
     public Key key;
+    public Key secondaryKey;
+
     private String keyName;
     private String actionInformation;
     public boolean continous = false;
@@ -36,7 +38,6 @@ public class Action {
         String keyName = actionKey != null? actionKey : key + "";
 
         this.keyName = keyName;
-
     }
 
     public void setKey(char key){
@@ -45,11 +46,38 @@ public class Action {
         this.keyName = key + "";
     }
 
+    public void setSecondary(int key){
+        this.secondaryKey = new Key<Integer>();
+        this.secondaryKey.value = key;
+//        String actionKey = Input.getKeyCodeName(key);
+//        String keyName = actionKey != null? actionKey : key + "";
+//
+//        this.keyName = keyName;
+    }
+
+    public void setSecondary(char key){
+        this.secondaryKey= new Key<Character>();
+        this.secondaryKey.value = key;
+//        this.keyName = key + "";
+    }
+
+    public Key getSecondary(){
+        if(secondaryKey == null){
+            return new Key<Integer>();
+        }
+        return secondaryKey;
+    }
+
     public String getKeyName() {
         return keyName;
     }
 
     public String getKeyInfo(){
         return actionInformation;
+    }
+
+    @Override
+    public String toString() {
+        return "" + actionInformation + '\'';
     }
 }

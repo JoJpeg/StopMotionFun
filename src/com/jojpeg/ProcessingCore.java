@@ -2,11 +2,10 @@ package com.jojpeg;
 
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
-import com.jojpeg.input.KeyBoardInput;
 import com.jojpeg.controllers.AnimatingController;
 import com.jojpeg.controllers.Controller;
 import com.jojpeg.controllers.ModeController;
-import com.jojpeg.controllers.ProjectionController;
+import com.jojpeg.controllers.SettingsController;
 import com.jojpeg.input.NumPadInput;
 import processing.core.PApplet;
 
@@ -18,9 +17,11 @@ public class ProcessingCore extends PApplet {
     private Renderer renderer;
     private Input input;
     private Controller currentController;
-    public static ProjectionController projectionController;
+    public static SettingsController settingsController;
     public static AnimatingController animatingController;
     public static ModeController modeController;
+
+
 
     @Override
     public void settings() {
@@ -30,25 +31,32 @@ public class ProcessingCore extends PApplet {
 
     public void setup() {
 
-        Cam cam = new Cam(this);
+        println("Initializing Camera...");
+        Cam cam = new Cam(this, true);
+        println("Initializing AnimationSystem...");
         Animation animation = new Animation(this);
 
+        println("Initializing Input...");
         input = new NumPadInput();
 
 //        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
 //        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
 //        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
 
+        println("Initializing Save System...");
         SaveSystem saveSystem = new SaveSystem(this);
+        println("Initializing Renderer...");
         renderer = new Renderer(this, width, height);
 
-        projectionController = new ProjectionController(renderer, saveSystem);
+        println("Initializing Controllers...");
+        println("...Animating...");
         animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
-        modeController = new ModeController(this, new Controller[]{projectionController, modeController});
+        println("...Mode...");
+        modeController = new ModeController(this, renderer, input);
+        println("...Settings...");
+        settingsController = new SettingsController(renderer, saveSystem, cam);
 
-        setCurrentController(animatingController);
-
-        Input.defaultActions.add(new  Action(Input.Key.BACKSPACE, "Select Mode"){
+        Input.defaultTriggerActions.add(new  Action(Input.Key.BACKSPACE, "Select Mode"){
             @Override
             public void Invoke() {
                 if (currentController == animatingController) {
@@ -58,26 +66,27 @@ public class ProcessingCore extends PApplet {
                 }
             }
         });
+
+        setCurrentController(animatingController);
+
+        println("Initializing Done...");
     }
 
     public void draw() {
+        input.update();
         background(136);
         currentController.update(this);
+        input.draw(this,renderer);
         renderer.draw(this);
         stroke(0,0,0);
         currentController.lateUpdate(this);
-        input.draw(this);
         input.clearDownEvents();
     }
 
 
     public void keyPressed(){
         input.newKey(keyCode, key) ;
-        input.update();
-        println("____");
-        println(key + "  KeyCode: " + keyCode + " -> (char):" + (char)keyCode);
-        println(key + "  (int): " + (int) key);
-        println(input.keys());
+//        input.printInfos(this);
         key = 0; // Prevent ESC key to be registered
     }
 

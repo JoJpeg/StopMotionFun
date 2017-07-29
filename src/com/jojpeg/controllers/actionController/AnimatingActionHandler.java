@@ -6,11 +6,11 @@ import com.jojpeg.controllers.AnimatingController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 
-public class AnimatingActionController extends ActionController {
+public class AnimatingActionHandler extends ActionHandler {
 
     AnimatingController controller;
 
-    public AnimatingActionController(AnimatingController controller) {
+    public AnimatingActionHandler(AnimatingController controller) {
         this.controller = controller;
     }
 
@@ -35,7 +35,7 @@ public class AnimatingActionController extends ActionController {
             controller.play = !controller.play;
 
             if(controller.play) {
-                controller.onion = false;
+                controller.model.onion = false;
                 controller.p.frameRate(Animation.fps);
             }
             else {
@@ -61,14 +61,14 @@ public class AnimatingActionController extends ActionController {
     public Action project = new Action('p', "Project Camera Input"){
         @Override
         public void Invoke() {
-            controller.project = !controller.project;
+            controller.model.project = !controller.model.project;
         }
     };
 
     public Action onion = new Action('o', "Activate Onion Skin"){
         @Override
         public void Invoke() {
-            controller.onion = !controller.onion;
+            controller.model.onion = !controller.model.onion;
         }
     };
 

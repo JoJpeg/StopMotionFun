@@ -1,11 +1,9 @@
 package com.jojpeg.controllers;
 
 
-import com.jojpeg.QuadGrid;
-import com.jojpeg.Renderer;
-import com.jojpeg.SaveSystem;
-import com.jojpeg.controllers.actionController.ActionController;
-import com.jojpeg.controllers.actionController.ProjectionActionController;
+import com.jojpeg.*;
+import com.jojpeg.controllers.actionController.ActionHandler;
+import com.jojpeg.controllers.actionController.SettingsActionHandler;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -14,29 +12,48 @@ import processing.core.PVector;
 /**
  * Created by J4ck on 18.07.2017.
  */
-public class ProjectionController extends Controller {
+public class SettingsController extends Controller {
     public int projectionMoveIndex = 1;
     public Renderer renderer;
     public SaveSystem saveSystem;
     QuadGrid plane;
-    ProjectionActionController actionController = new ProjectionActionController(this);
+    PImage referenceImage;
+    SettingsActionHandler actionController = new SettingsActionHandler(this);
 
-    public ProjectionController(Renderer renderer, SaveSystem saveSystem) {
+    public Cam cam;
+
+    public Settings settings = new Settings();
+
+    public SettingsController(Renderer renderer, SaveSystem saveSystem, Cam cam) {
         this.renderer = renderer;
+        this.cam = cam;
         plane = renderer.getPlane();
         this.saveSystem = saveSystem;
-    }
-
-    @Override
-    public void update(PApplet p) {
-        if (p.mousePressed) {
-            PVector move = new PVector(p.mouseX - p.pmouseX, p.mouseY - p.pmouseY);
-            movePlaneAnchor(move);
-        }
+        settings.quadModel = plane.model;
+        settings.animModel = ProcessingCore.animatingController.model;
     }
 
     @Override
     public void lateUpdate(PApplet p) {
+        if (p.mousePressed) {
+            PVector move = new PVector(p.mouseX - p.pmouseX, p.mouseY - p.pmouseY);
+            movePlaneAnchor(move);
+        }
+
+        renderer.setPlaneFrame(referenceImage);
+
+        ProcessingCore.animatingController.drawThumbsBar(p);
+//        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, AnimatingController.thumbsPosition - 5);
+        drawUI(p);
+
+    }
+
+    public void takeReferencePicture(Cam cam){
+        referenceImage = cam.getImage();
+    }
+
+    @Override
+    public void update(PApplet p) {
         drawUI(p);
     }
 
@@ -87,7 +104,7 @@ public class ProjectionController extends Controller {
         p.point(x, y);
 
         x = plane.renderWidth/2;
-        y = AnimatingController.thumbsPosition;
+        y = ProcessingCore.animatingController.model.thumbsPosition;
 
         if(projectionMoveIndex == 5) {
             p.stroke(0,0,255);
@@ -105,16 +122,6 @@ public class ProjectionController extends Controller {
         p.strokeWeight(8);
         p.text("(6) ThumbsPos", x, y);
         p.point(x, y);
-
-        PImage box = p.createImage(400,111, p.RGB);
-        box.loadPixels();
-        for (int j = 0; j < box.pixels.length; j++) {
-            box.pixels[j] = p.color(255,0,0);
-        }
-
-        box.updatePixels();
-        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, AnimatingController.thumbsPosition - 5);
-
     }
 
     public void movePlaneAnchor(PVector value) {
@@ -129,24 +136,26 @@ public class ProjectionController extends Controller {
                 plane.setShift(x + value.x, y + value.y);
             }
             if(projectionMoveIndex == 5){
-                AnimatingController.thumbsPosition += (int)value.y;
+                ProcessingCore.animatingController.model.thumbsPosition += (int)value.y;
             }
         }
     }
 
     @Override
     public void save(SaveSystem saveSystem) {
-        saveSystem.save(plane.model);
+        saveSystem.save(settings);
     }
 
     @Override
     public void load(SaveSystem saveSystem) {
-        plane.model = (QuadGrid.QuadModel)saveSystem.load(plane.model);
+        settings = (Settings)saveSystem.load(settings);
+        plane.model = settings.quadModel;
         plane.UpdateCorners();
+        ProcessingCore.animatingController.model = settings.animModel;
     }
 
     @Override
-    public ActionController<ProjectionActionController> getActionController() {
+    public ActionHandler<SettingsActionHandler> getActionController() {
         return actionController;
     }
 }

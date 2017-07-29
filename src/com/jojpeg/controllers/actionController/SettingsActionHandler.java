@@ -1,15 +1,15 @@
 package com.jojpeg.controllers.actionController;
 
-import com.jojpeg.controllers.ProjectionController;
+import com.jojpeg.controllers.SettingsController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
 import processing.core.PVector;
 
-public class ProjectionActionController extends ActionController {
+public class SettingsActionHandler extends ActionHandler {
 
-    ProjectionController controller;
+    SettingsController controller;
 
-    public ProjectionActionController(ProjectionController controller) {
+    public SettingsActionHandler(SettingsController controller) {
         this.controller = controller;
     }
 
@@ -125,6 +125,13 @@ public class ProjectionActionController extends ActionController {
         @Override
         public void Invoke(){
             controller.load(controller.saveSystem);
+        }
+    };
+
+    public Action takeFrame =  new Action('f', "Take Reference Picture"){
+        @Override
+        public void Invoke(){
+            controller.takeReferencePicture(controller.cam);
         }
     };
 }

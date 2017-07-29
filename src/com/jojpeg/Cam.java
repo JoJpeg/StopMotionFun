@@ -13,22 +13,40 @@ public class Cam {
     PApplet p;
 
     public Cam(PApplet p) {
+        this(p,false);
+    }
+
+    public Cam(PApplet p, boolean initLater) {
         this.p = p;
+        if(!initLater) initialize();
+    }
+
+    public void initialize(){
+        System.out.println("Listing Caputre Devices");
         String[] cameras = Capture.list();
+        PApplet.printArray(cameras);
 
         if(cameras != null && cameras.length > 0){
             capture = new Capture(p, cameras[0]);
             capture.start();
         }
-
     }
 
+    /***
+     *
+     * @return the camera Input pointer.
+     */
     public PImage getRealtime(){
         if(!ready()) return Renderer.NullImage;
         capture.read();
         return capture;
     }
 
+
+    /***
+     *
+     * @return the Picture of the Frame it's called.
+     */
     public PImage getImage(){
         if (ready()) {
             capture.read();

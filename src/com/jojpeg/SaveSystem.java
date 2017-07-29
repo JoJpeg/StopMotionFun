@@ -62,7 +62,7 @@ public class SaveSystem {
         return null;
     }
 
-    private void saveObject(Object object, File selection){
+    public void saveObject(Object object, File selection){
         try {
             writer = new FileWriter(selection.getPath());
             gson.toJson(object, writer);
@@ -73,7 +73,7 @@ public class SaveSystem {
         }
     }
 
-    private Object loadObject(Object object, File selection){
+    public Object loadObject(Object object, File selection){
         try{
 
             reader = new FileReader(selection);

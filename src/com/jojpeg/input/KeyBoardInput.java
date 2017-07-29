@@ -1,8 +1,7 @@
 package com.jojpeg.input;
 
 
-import com.jojpeg.ProcessingCore;
-import com.jojpeg.controllers.Controller;
+import com.jojpeg.Renderer;
 import processing.core.PApplet;
 
 /**
@@ -19,14 +18,14 @@ public class KeyBoardInput extends Input {
     }
 
     @Override
-    protected void drawGUI(PApplet p) {
+    protected void drawGUI(PApplet p, Renderer renderer) {
         int textSize = 15;
         int padding = 5;
         p.strokeWeight(3);
         p.textSize(textSize);
         float y = 50;
 
-        for(Action a : Input.actions){
+        for(Action a : Input.triggerActions){
             p.fill(0);
             p.rect(15,y, p.textWidth(a.getKeyName() + 5),20);
             p.fill(255);

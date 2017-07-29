@@ -3,13 +3,14 @@
 */
 
 package com.jojpeg.input;
-
-import com.jojpeg.controllers.ModeController;
-import com.jojpeg.controllers.actionController.ActionController;
+import com.jojpeg.Renderer;
+import com.jojpeg.controllers.actionController.ActionHandler;
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 /**
@@ -17,8 +18,18 @@ import java.util.HashMap;
  */
 public abstract class Input {
 
-    protected Object drawGUI = Modifier.ALT;
+    protected Action drawGui = new Action(Modifier.ALT, "Show Key Mapping"){
 
+        @Override
+        public void SetParameters() {
+            continous = true;
+        }
+
+        @Override
+        public void Invoke() {
+
+        }
+    };
 
     public static class Key{
         public static int ESC = 27;
@@ -45,43 +56,88 @@ public abstract class Input {
     static int lastKey;
     static char lastChar;
 
-    public static ArrayList<Action> defaultActions = new ArrayList<>();
-    public static ArrayList<Action> actions = new ArrayList<>();
-    static HashMap<ActionController, ArrayList<Action>> actionMap = new HashMap<>();
+    public static ArrayList<Action> defaultTriggerActions = new ArrayList<>();
+    public static ArrayList<Action> triggerActions = new ArrayList<>();
+
+    public static ArrayList<Action> defaultContinuousActions = new ArrayList<>();
+    public static ArrayList<Action> continuousActions = new ArrayList<>();
+
+    private ArrayList<Action> allActions = new ArrayList<>();
+
+    static HashMap<ActionHandler, ArrayList<ArrayList<Action>>> actionMap = new HashMap<>();
+
+    private boolean actionsModified = false;
 
     Input(){
+        defaultContinuousActions.add(drawGui);
         keyCodes = new int[10];
         chars = new char[10];
-        actions = new ArrayList<>();
+        triggerActions = new ArrayList<>();
     }
 
+    protected abstract void drawGUI(PApplet p, Renderer renderer);
+
+    public abstract void translate();
+
     public void update() {
-        ArrayList<Action> actionList = new ArrayList<>();
-        actionList.addAll(defaultActions);
-        actionList.addAll(actions);
 
-
-        for (Action action : actionList){
-            if(action.continous){
-                if(keyIsDown(action.key.value)) {
-                    action.Invoke();
-                }
-            }else {
-                if(onIsDown(action.key.value)){
-                    action.Invoke();
-                }
+        //TODO: Add conts in trigger() remove when key released
+        for (Action action : continuousActions){
+            if(keyIsDown(action.key.value) || keyIsDown(action.getSecondary().value)) {
+                action.Invoke();
             }
         }
     }
 
-    public void draw(PApplet p){
-        if(keyIsDown(drawGUI)){
-            drawGUI(p);
+    public void trigger(){
+        actionsModified = false;
+
+        try {
+            for (Action action : allActions) {
+                if (keyIsDown(action.key.value) || keyIsDown(action.getSecondary().value)) {
+                    System.out.println(action.getKeyInfo());
+                    if (!action.continous) {
+                        action.Invoke();
+                        if(actionsModified) break;
+                    }
+                }
+            }
+        } catch (ConcurrentModificationException e){
+            System.out.println("Concurrent Modification Exception");
         }
     }
 
-    protected abstract void drawGUI(PApplet p);
-    public abstract void translate();
+    public void draw(PApplet p, Renderer renderer){
+        if(keyIsDown(drawGui.key.value) || keyIsDown(drawGui.secondaryKey.value)){
+            drawKeyMap(p,renderer);
+        }
+    }
+
+    public void drawKeyMap(PApplet p, Renderer renderer){
+        PGraphics canvas = p.createGraphics(renderer.getPlane().renderWidth, renderer.getPlane().renderHeight);
+        canvas.beginDraw();
+
+        //TODO: Size
+
+        int textSize = 15;
+        int padding = 5;
+        canvas.noStroke();
+        canvas.textSize(textSize);
+        float y = 50;
+
+        for(Action a : Input.triggerActions){
+            canvas.fill(0);
+            canvas.rect(15 ,y + 1, 200,-19);
+            canvas.fill(255);
+            canvas.text(a.getKeyName() + " : " + a.getKeyInfo(), 20, y);
+            y += textSize + padding;
+        }
+        canvas.endDraw();
+
+        renderer.addLayer(canvas,255);
+
+        drawGUI(p, renderer);
+    }
 
     /***
      *
@@ -91,7 +147,7 @@ public abstract class Input {
      * @return value combination is pressed
      */
     private boolean keyComboIsDown(char key, int modifier, String actionInfo){
-//        actions.put(value + "+" + modifier, actionInfo);
+//        triggerActions.put(value + "+" + modifier, actionInfo);
         boolean keyDown = keyCharIsDown(key);
         boolean modifierDown = keyCodeIsDown(modifier);
         return keyDown && modifierDown;
@@ -121,6 +177,7 @@ public abstract class Input {
      * @return value is pressed
      */
     public boolean onIsDown(Object key){
+        if(key == null) return false;
         if(key.getClass().equals(Character.class))return onCharIsDown((char)key);
         if(key.getClass().equals(Integer.class))return onCodeIsDown((int)key);
         System.out.println("ERROR: False type: " + key.getClass());
@@ -133,8 +190,9 @@ public abstract class Input {
      * @return value is pressed
      */
     public boolean keyIsDown(Object key){
+        if(key == null) return false;
         if(key.getClass().equals(Character.class)) return keyCharIsDown((char)key);
-        if(key.getClass().equals(Integer.class))return keyCodeIsDown((int)key);
+        if(key.getClass().equals(Integer.class)) return keyCodeIsDown((int)key);
         System.out.println("ERROR: False type: " + key.getClass());
         return false;
     }
@@ -143,7 +201,6 @@ public abstract class Input {
         for (int i = 0; i < chars.length; i++) {
             char k = chars[i];
             if(k == key){
-                System.out.println(k + " = " + key);
                 return keyCodeIsDown(keyCodes[i]);
             }
         }
@@ -197,6 +254,7 @@ public abstract class Input {
 
             //keys();
         }
+        trigger();
     }
 
     public static void clearDownEvents(){
@@ -268,39 +326,66 @@ public abstract class Input {
         return  null;
     }
 
-    private void registerActionController(ActionController controller){
-
-        ArrayList<Action> newActions = new ArrayList<>();
+    private void registerActionController(ActionHandler controller){
+        actionsModified = true;
+        ArrayList<Action> newTriggers = new ArrayList<>();
+        ArrayList<Action> newContinuous = new ArrayList<>();
         Field[] fields = controller.getClass().getFields();
 
         for (Field field : fields){
             try {
-                System.out.println("Registered Action: " + field.getName());
+//                System.out.println("Registered Action: " + field.getName());
                 if(field.getType().equals(Action.class)){
-                    newActions.add((Action)field.get(controller));
+                    Action action = (Action)field.get(controller);
+                    if(action.continous) newContinuous.add(action);
+                    else newTriggers.add(action);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        actionMap.put(controller,newActions);
-        actions = newActions;
-        System.out.println("Actions size: " + actions.size());
+
+        ArrayList<ArrayList<Action>> actions = new ArrayList<>();
+        actions.add(newTriggers);
+        actions.add(newContinuous);
+
+        actionMap.put(controller, actions);
+
     }
 
-    public void addActions(ActionController controller){
+    public void addActions(ActionHandler controller){
         if(actionMap.containsKey(controller)){
-            System.out.println("Adding existing actions of " + controller);
-            actions = actionMap.get(controller);
+            System.out.println("Adding existing triggerActions of " + controller);
         }else {
-            System.out.println("Registering actions of " + controller);
+            System.out.println("Registering triggerActions of " + controller);
             registerActionController(controller);
         }
+
+        triggerActions.clear();
+        continuousActions.clear();
+        allActions.clear();
+
+        triggerActions.addAll(actionMap.get(controller).get(0));
+        triggerActions.addAll(defaultTriggerActions);
+
+        continuousActions.addAll(actionMap.get(controller).get(1));
+        continuousActions.addAll(defaultContinuousActions);
+
+        allActions.addAll(triggerActions);
+        allActions.addAll(continuousActions);
+
+        PApplet.printArray(allActions);
 
         translate();
     }
 
+    public void printInfos(PApplet p){
+        p.println("____");
+        p.println(p.key + "  KeyCode: " + p.keyCode + " -> (char):" + (char)p.keyCode);
+        p.println(p.key + "  (int): " + (int) p.key);
+        p.println(keys());
 
+    }
 
 }// end Input
 
