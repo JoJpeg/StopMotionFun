@@ -1,5 +1,6 @@
 package com.jojpeg.controllers;
 
+import com.jojpeg.Renderer;
 import com.jojpeg.SaveSystem;
 import com.jojpeg.controllers.actionController.ActionHandler;
 import com.jojpeg.input.Input;
@@ -13,16 +14,16 @@ public abstract class Controller {
     protected Input input;
 
     /***
-     * Is called Before the Renderer draws. Use this for draw on the Renderer.Plane Layers
+     * Is called Before the Renderer draws. Use this to modify the Renderer
      * @param p
      */
-    public abstract void update(PApplet p);
+    public abstract void update(PApplet p, Renderer renderer);
 
     /***
      * Is called After the Renderer draws. Use this for drawing things unrelated to the Renderer.Plane
      * @param p
      */
-    public abstract void lateUpdate(PApplet p);
+    public abstract void lateUpdate(PApplet p, Renderer renderer);
 
 //    public abstract void processInput(Input input);
 

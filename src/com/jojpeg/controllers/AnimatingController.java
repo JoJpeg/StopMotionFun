@@ -46,7 +46,7 @@ public class AnimatingController extends Controller {
     }
 
     @Override
-    public void lateUpdate(PApplet p) {
+    public void lateUpdate(PApplet p, Renderer renderer) {
         if(play) {
             renderer.setPlaneFrame(animation.play());
         }
@@ -72,7 +72,7 @@ public class AnimatingController extends Controller {
     }
 
     @Override
-    public void update(PApplet p) {
+    public void update(PApplet p, Renderer renderer) {
 
     }
 

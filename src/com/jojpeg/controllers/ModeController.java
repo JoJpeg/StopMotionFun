@@ -24,12 +24,12 @@ public class ModeController extends Controller {
     }
 
     @Override
-    public void update(PApplet p) {
+    public void update(PApplet p, Renderer renderer) {
         input.drawKeyMap(p, renderer);
     }
 
     @Override
-    public void lateUpdate(PApplet p) {
+    public void lateUpdate(PApplet p, Renderer renderer) {
         //TODO: Draw on Plane Canvas (implement "PGraphics plane.beginDraw(); plane.endDraw();" in Renderer)
         /*
         int textSize = 15;

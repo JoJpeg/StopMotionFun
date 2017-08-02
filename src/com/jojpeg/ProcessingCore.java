@@ -1,11 +1,8 @@
 package com.jojpeg;
 
+import com.jojpeg.controllers.*;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
-import com.jojpeg.controllers.AnimatingController;
-import com.jojpeg.controllers.Controller;
-import com.jojpeg.controllers.ModeController;
-import com.jojpeg.controllers.SettingsController;
 import com.jojpeg.input.NumPadInput;
 import processing.core.PApplet;
 
@@ -20,7 +17,7 @@ public class ProcessingCore extends PApplet {
     public static SettingsController settingsController;
     public static AnimatingController animatingController;
     public static ModeController modeController;
-
+    public static CamSettingsController camController;
 
 
     @Override
@@ -32,7 +29,9 @@ public class ProcessingCore extends PApplet {
     public void setup() {
 
         println("Initializing Camera...");
-        Cam cam = new Cam(this, false);
+
+        Cam cam = new Cam(this, true);
+
         println("Initializing AnimationSystem...");
         Animation animation = new Animation(this);
 
@@ -45,14 +44,20 @@ public class ProcessingCore extends PApplet {
 
         println("Initializing Save System...");
         SaveSystem saveSystem = new SaveSystem(this);
+
         println("Initializing Renderer...");
         renderer = new Renderer(this, width, height);
 
         println("Initializing Controllers...");
+
         println("...Animating...");
         animatingController = new AnimatingController(this, animation, cam, renderer, saveSystem);
         println("...Mode...");
         modeController = new ModeController(this, renderer, input);
+
+        println("..CamController...");
+        camController = new CamSettingsController(cam);
+
         println("...Settings...");
         settingsController = new SettingsController(renderer, saveSystem, cam);
 
@@ -67,7 +72,7 @@ public class ProcessingCore extends PApplet {
             }
         });
 
-        setCurrentController(animatingController);
+        setCurrentController(camController);
 
         println("Initializing Done...");
     }
@@ -75,11 +80,11 @@ public class ProcessingCore extends PApplet {
     public void draw() {
         input.update();
         background(136);
-        currentController.update(this);
+        currentController.update(this, renderer);
         input.draw(this,renderer);
         renderer.draw(this);
         stroke(0,0,0);
-        currentController.lateUpdate(this);
+        currentController.lateUpdate(this, renderer);
         input.clearDownEvents();
     }
 

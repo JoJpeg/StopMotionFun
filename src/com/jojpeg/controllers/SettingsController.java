@@ -34,7 +34,7 @@ public class SettingsController extends Controller {
     }
 
     @Override
-    public void lateUpdate(PApplet p) {
+    public void lateUpdate(PApplet p, Renderer renderer) {
         if (p.mousePressed) {
             PVector move = new PVector(p.mouseX - p.pmouseX, p.mouseY - p.pmouseY);
             movePlaneAnchor(move);
@@ -53,7 +53,7 @@ public class SettingsController extends Controller {
     }
 
     @Override
-    public void update(PApplet p) {
+    public void update(PApplet p, Renderer renderer) {
         drawUI(p);
     }
 
