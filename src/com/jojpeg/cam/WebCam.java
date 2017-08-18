@@ -1,32 +1,31 @@
-package com.jojpeg;
 
+package com.jojpeg.cam;
+
+import com.jojpeg.Renderer;
 import processing.core.PApplet;
-import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.video.Capture;
+//import processing.video.Capture;
 
-/**
- * Created by J4ck on 18.07.2017.
- */
-public class Cam {
+//TODO:
+// the JNA lib inside the WebCam Video Library collides with the JNA of the Canon Lib
+
+public class WebCam {
+  /*
     Capture capture;
     PApplet p;
 
     String[] camList;
 
-
-    public Cam(PApplet p) {
-        this(p,false);
+    public WebCam(PApplet p) {
+        this(p,true);
     }
 
-
-
-    public Cam(PApplet p, boolean initLater) {
+    public WebCam(PApplet p, boolean initLater) {
         this.p = p;
         if(!initLater) initialize();
     }
 
-    public String[] getCamListCached(){
+    public String[] getAvailableCamsCached(){
         if(camList == null) getCamList();
         return camList;
     }
@@ -39,7 +38,7 @@ public class Cam {
     public void setCam(String cam){
         int index = 0;
 
-        String[] camListCached = getCamListCached();
+        String[] camListCached = getAvailableCamsCached();
         for (int i = 0; i < camListCached.length; i++) {
             String camName = camListCached[i];
             if(camListCached[i].equals(camName)){
@@ -56,7 +55,7 @@ public class Cam {
 
     public void initialize(int index){
 //        System.out.println("Listing Caputre Devices");
-        String[] cameras = getCamListCached();
+        String[] cameras = getAvailableCamsCached();
 //        PApplet.printArray(cameras);
 
         if(cameras != null && cameras.length > 0){
@@ -69,25 +68,16 @@ public class Cam {
         System.out.println("Cam Init Done");
     }
 
-    /***
-     *
-     * @return the camera Input pointer.
-     */
     public PImage getRealtime(){
         if(!ready()) return Renderer.NullImage;
         capture.read();
         return capture;
     }
 
-
-    /***
-     *
-     * @return the Picture of the Frame it's called.
-     */
-    public PImage getImage(){
+    public PImage getFrame(){
         if (ready()) {
             capture.read();
-            return new PImage(capture.getImage());
+            return new PImage(capture.getFrame());
         }
 
         return Renderer.NullImage;
@@ -100,5 +90,5 @@ public class Cam {
         }
         return false;
     }
-
+    */
 }

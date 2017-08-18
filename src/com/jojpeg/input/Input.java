@@ -40,6 +40,7 @@ public abstract class Input {
         public static int RIGHT = 39;
         public static int DOWN = 40;
         public static int LEFT = 37;
+        public static int ENTER = 13;
     }
 
     public static class Modifier{

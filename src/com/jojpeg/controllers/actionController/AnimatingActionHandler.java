@@ -2,6 +2,7 @@ package com.jojpeg.controllers.actionController;
 
 
 import com.jojpeg.Animation;
+import com.jojpeg.Frame;
 import com.jojpeg.controllers.AnimatingController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
@@ -47,14 +48,14 @@ public class AnimatingActionHandler extends ActionHandler {
     public Action addFrame = new Action('f', "Add Frame"){
         @Override
         public void Invoke() {
-            controller.animation.addFrame(controller.cam.getImage());
+            controller.animation.addFrame(controller.cam.getFrame());
         }
     };
 
     public Action replaceFrame =   new Action('r', "Replace Frame"){
         @Override
         public void Invoke() {
-            controller.animation.replaceFrame(controller.cam.getImage());
+            controller.animation.replaceFrame(controller.cam.getFrame());
         }
     };
 

@@ -1,6 +1,7 @@
 package com.jojpeg.controllers;
 
 import com.jojpeg.*;
+import com.jojpeg.cam.Cam;
 import com.jojpeg.controllers.actionController.ActionHandler;
 import com.jojpeg.controllers.actionController.AnimatingActionHandler;
 import gifAnimation.GifMaker;
@@ -48,10 +49,10 @@ public class AnimatingController extends Controller {
     @Override
     public void lateUpdate(PApplet p, Renderer renderer) {
         if(play) {
-            renderer.setPlaneFrame(animation.play());
+            renderer.setBackLayer(animation.play());
         }
         else {
-            renderer.setPlaneFrame(animation.current());
+            renderer.setBackLayer(animation.current());
             if(model.project) {
                 renderer.setLayer(cam.getRealtime(),1, model.projectionOpacity);
             }
@@ -61,7 +62,7 @@ public class AnimatingController extends Controller {
         if(model.onion) {
             int layer = 1;
             for (int i = animation.caretPos - model.onionBack; i < animation.caretPos + model.onionFront + 1; i++) {
-                PImage onion =   animation.getFrame(i);
+                PImage onion = animation.getFrame(i).getImage();
                 if(onion != null && i != animation.caretPos) {
                     renderer.setLayer(onion, layer, model.onionOpacity);
                     layer ++;
@@ -82,13 +83,13 @@ public class AnimatingController extends Controller {
         saveSystem.save(animation.getModel());
         File selection = saveSystem.getLastSelection();
         if(selection == null) return;
-        ArrayList<Animation.Frame> frames = animation.getFrames();
+        ArrayList<Frame> frames = animation.getFrames();
         String parentPath = selection.getParent() + "\\";
         GifMaker gif = new GifMaker(p, parentPath  + "_Anim_" +frames.get(0).getName() + ".gif");
         gif.setRepeat(0);
 
         for (int i = 0; i < frames.size(); i++) {
-            Animation.Frame frame = frames.get(i);
+            Frame frame = frames.get(i);
             String path = parentPath + frame.getName()+ " - " + p.nf(i, 5) + ".png";
             System.out.println(path);
             frame.getImage().save(path);
@@ -127,14 +128,14 @@ public class AnimatingController extends Controller {
         PImage[] thumbs = new PImage[7];
         int index = 0;
         for (int i = animation.caretPos - 3; i < animation.caretPos + 4; i++) {
-            thumbs[index] = animation.getThumbnail(i);
+            thumbs[index] = animation.getFrame(i).getThumbnail();
             index ++;
         }
 
         PImage box = p.createImage(111,111, p.RGB);
         box.loadPixels();
         for (int j = 0; j < box.pixels.length; j++) {
-            box.pixels[j] = p.color(255,0,0);
+            box.pixels[j] = p.color(160);
         }
 
         box.updatePixels();
@@ -158,7 +159,6 @@ public class AnimatingController extends Controller {
             renderer.drawOnCanvas(t, x, y);
         }
     }
-
 
     @Override
     public ActionHandler<AnimatingActionHandler> getActionController() {

@@ -9,7 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="gif" level="project" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="library" name="video" level="project" />
     <orderEntry type="library" name="Processing" level="project" />
+    <orderEntry type="library" name="edsdk4j" level="project" />
+    <orderEntry type="library" name="jna" level="project" />
   </component>
 </module>

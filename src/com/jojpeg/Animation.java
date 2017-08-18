@@ -2,6 +2,7 @@ package com.jojpeg;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+
 import java.util.ArrayList;
 
 
@@ -16,56 +17,29 @@ public class Animation {
 
     public AnimationModel model;
 
-
     public class AnimationModel extends Model{
         public String path;
         public String[] names;
         public int[] indices;
     }
 
-    public class Frame{
-        private PImage thumbnail;
-        PImage frame;
-        String name;
-
-        public Frame(PImage frame, String name) {
-            this.frame = frame;
-            this.name = name;
-        }
-
-        public PImage getImage(){
-            return frame;
-        }
-
-        public PImage getThumbnail(){
-            //TODO: calculate Thumb
-            if(thumbnail == null){
-                thumbnail = new PImage(frame.getImage());
-            }
-            return thumbnail;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     public PImage play(){
         if(frames.size() == 0) return null;
-        PImage result = frames.get(currentFrameIndex % frames.size()).frame;
+        PImage result = frames.get(currentFrameIndex % frames.size()).getImage();
         currentFrameIndex++;
         return result;
     }
 
-    public PImage getFrame(int index){
-        if(index > frames.size() - 1 || index < 0) return null;
-        if(frames.size() == 0) return  null;
+    public Frame getFrame(int index){
+        if(index > frames.size() - 1 || index < 0) return Frame.Null;
+        if(frames.size() == 0) return  Frame.Null;
         Frame frame = frames.get(index);
-        if(frame == null) return null;
-        return frames.get(index).frame;
+        if(frame == null) return Frame.Null;
+        return frames.get(index);
     }
 
-    public PImage getThumbnail(int index){
+
+    private PImage getThumbnail(int index){
         if(index > frames.size() - 1 || index < 0) return null;
         if(frames.size() == 0) return  null;
         Frame frame = frames.get(index);
@@ -77,7 +51,7 @@ public class Animation {
         if(frames.size() == 0) return  null;
         Frame frame = frames.get(caretPos);
         if(frame == null) return null;
-        return frame.frame;
+        return frame.getImage();
     }
 
     public Animation(PApplet pApplet){
@@ -85,13 +59,15 @@ public class Animation {
     }
 
 
-    public void addFrameAtPosition(PImage frame, int index){
+    public void addFrameAtPosition(Frame frame, int index){
         caretPos = index;
-        frames.add(index, new Frame(frame, "frame" + index));
+        frame.setName("frame" + index);
+        frames.add(index, frame);
     }
 
-    public void replaceFrame(PImage frame){
-        if(frames.size() > 0) frames.set(caretPos, new Frame(frame, "frame" + caretPos));
+    public void replaceFrame(Frame frame){
+        frame.setName("frame" + caretPos);
+        if(frames.size() > 0) frames.set(caretPos,frame);
         else addFrame(frame);
     }
 
@@ -101,10 +77,13 @@ public class Animation {
         if(index == caretPos) caretLeft();
     }
 
-    public void addFrame(PImage frame){
-        if(frames.size() == 0) frames.add(new Frame(frame, "frame" + caretPos));
+    public void addFrame(Frame frame){
+        frame.setName( "frame" + caretPos);
+
+        if(frames.size() == 0) frames.add(frame);
+
         else {
-            frames.add(caretPos + 1, new Frame(frame, "frame" + caretPos));
+            frames.add(caretPos + 1, frame);
             caretPos++;
         }
     }
@@ -160,7 +139,7 @@ public class Animation {
             model.names = new String[frames.size()];
             for (int i = 0; i < frames.size(); i++) {
                 model.indices[i] = i;
-                model.names[i] = frames.get(i).name;
+                model.names[i] = frames.get(i).getName();
 
             }
         }
@@ -168,14 +147,14 @@ public class Animation {
         return model;
     }
 
-
-
     public ArrayList<Frame> getFrames() {
         return frames;
     }
 
     public Frame makeFrame(PImage image, String name){
-        return new Frame(image,name);
+        Frame frame = new Frame(image);
+        frame.setName(name);
+        return frame;
     }
 
 }

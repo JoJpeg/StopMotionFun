@@ -1,6 +1,6 @@
 package com.jojpeg.controllers;
 
-import com.jojpeg.Cam;
+import com.jojpeg.cam.Cam;
 import com.jojpeg.Model;
 import com.jojpeg.Renderer;
 import com.jojpeg.SaveSystem;
@@ -45,13 +45,13 @@ public class CamSettingsController extends Controller {
         for (int i = getCamIndex() - scope; i < getCamIndex() + scope; i++) {
 
             int index = i;
-            if(scope * 2 + 1 < cam.getCamListCached().length) {
+            if(scope * 2 + 1 < cam.getAvailableCamsCached().length) {
                 if (i < 0) {
-                    index = (cam.getCamListCached().length - 1) + i;
+                    index = (cam.getAvailableCamsCached().length - 1) + i;
                 }
             }else {
                 index = i + scope;
-                if(index > cam.getCamListCached().length - 1) break;
+                if(index > cam.getAvailableCamsCached().length - 1) break;
             }
 
             canvas.fill(160);
@@ -60,7 +60,7 @@ public class CamSettingsController extends Controller {
             canvas.rect(x - 5 ,y + 1, 800,-19);
             canvas.fill(0);
 
-            String text = index + " >" + cam.getCamListCached()[index].split("name=")[1];
+            String text = index + " >" + cam.getAvailableCamsCached()[index];//.split("name=")[1];
 
             canvas.text(text, x, y);
             y += textSize + padding;
@@ -88,7 +88,7 @@ public class CamSettingsController extends Controller {
     }
 
     public void setCamIndex(int index){
-        int max = cam.getCamListCached().length - 1;
+        int max = cam.getAvailableCamsCached().length - 1;
         if(index < 0) {
             model.camIndex = max;
             return;

@@ -1,5 +1,7 @@
 package com.jojpeg;
 
+import com.jojpeg.cam.EosCam;
+import com.jojpeg.cam.WebCam;
 import com.jojpeg.controllers.*;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
@@ -30,7 +32,7 @@ public class ProcessingCore extends PApplet {
 
         println("Initializing Camera...");
 
-        Cam cam = new Cam(this, true);
+        EosCam cam = new EosCam(this);
 
         println("Initializing AnimationSystem...");
         Animation animation = new Animation(this);
@@ -38,9 +40,9 @@ public class ProcessingCore extends PApplet {
         println("Initializing Input...");
         input = new NumPadInput();
 
-//        animation.addFrameAtPosition(loadImage("frame (1).gif"), 0);
-//        animation.addFrameAtPosition(loadImage("frame (2).gif"), 1);
-//        animation.addFrameAtPosition(loadImage("frame (3).gif"), 2);
+//        animation.addFrameAtPosition(asyncLoadFrame("frame (1).gif"), 0);
+//        animation.addFrameAtPosition(asyncLoadFrame("frame (2).gif"), 1);
+//        animation.addFrameAtPosition(asyncLoadFrame("frame (3).gif"), 2);
 
         println("Initializing Save System...");
         SaveSystem saveSystem = new SaveSystem(this);
@@ -72,7 +74,7 @@ public class ProcessingCore extends PApplet {
             }
         });
 
-        setCurrentController(camController);
+        setCurrentController(animatingController);
 
         println("Initializing Done...");
     }

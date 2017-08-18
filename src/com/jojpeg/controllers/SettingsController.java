@@ -2,6 +2,7 @@ package com.jojpeg.controllers;
 
 
 import com.jojpeg.*;
+import com.jojpeg.cam.Cam;
 import com.jojpeg.controllers.actionController.ActionHandler;
 import com.jojpeg.controllers.actionController.SettingsActionHandler;
 import processing.core.PApplet;
@@ -40,7 +41,7 @@ public class SettingsController extends Controller {
             movePlaneAnchor(move);
         }
 
-        renderer.setPlaneFrame(referenceImage);
+        renderer.setBackLayer(referenceImage);
 
         ProcessingCore.animatingController.drawThumbsBar(p);
 //        renderer.drawOnCanvas(box,renderer.getPlane().renderWidth / 2 - 60, AnimatingController.thumbsPosition - 5);
@@ -49,7 +50,7 @@ public class SettingsController extends Controller {
     }
 
     public void takeReferencePicture(Cam cam){
-        referenceImage = cam.getImage();
+        referenceImage = cam.getFrame().getImage();
     }
 
     @Override

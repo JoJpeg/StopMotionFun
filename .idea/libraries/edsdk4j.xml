@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="edsdk4j">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/canon/edsdk4j/target/edsdk4j-0.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/libs/canon/edsdk4j/target/edsdk4j-0.0.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/libs/canon/edsdk4j/target/edsdk4j-0.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

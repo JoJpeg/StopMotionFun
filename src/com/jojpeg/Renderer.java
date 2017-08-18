@@ -16,8 +16,11 @@ public class Renderer {
 
     QuadGrid plane;
     public static PImage NullImage;
+    public static PImage NullThumbnail;
     PApplet p;
     PGraphics canvas;
+
+    public boolean projectionPlane;
 
     ArrayList<Layer> layers = new ArrayList<>();
 
@@ -42,8 +45,10 @@ public class Renderer {
         canvas.beginDraw();
         canvas.clear();
         canvas.endDraw();
-        NullImage = makeImage((PGraphics) NullImage, p);
-        setPlaneFrame(NullImage);
+
+        NullImage = makeImage((PGraphics) NullImage, p, 640, 480);
+        NullThumbnail = makeImage((PGraphics) NullThumbnail, p, 320, 240);
+        setBackLayer(NullImage);
     }
 
     public void draw(PApplet p){
@@ -56,57 +61,61 @@ public class Renderer {
         }
 
         if(layers.size() == 0 || layers.get(0) == null) {
-            setPlaneFrame(NullImage);
+            setBackLayer(NullImage);
         }
         p.background(137);
 
         for (Layer layer : layers) {
             if(layer.frame != null) {
                 p.tint(255, layer.opacity);
-                plane.draw(p, layer.frame);
+                if(projectionPlane) plane.draw(p, layer.frame);
+                else  p.image(layer.frame, 0, 0, p.width, p.height);
             }
         }
 
         p.tint(255,255);
         if(canvas != null) {
-            plane.draw(p, canvas);
+            if(projectionPlane) plane.draw(p, canvas);
+            else p.image(canvas,0,0,p.width,p.height);
             if (canvas.pixels != null) {
                 canvas.beginDraw();
                 canvas.clear();
                 canvas.endDraw();
             }
         }
-        p.strokeWeight(5);
-        p.point(plane.model.shift[0], plane.model.shift[1]);
         layers.clear();
     }
 
-    public static PImage makeImage(PGraphics img, PApplet p) {
+    public static PImage makeImage(PGraphics img, PApplet p, int width, int height) {
         img = p.createGraphics(640, 480, p.P2D);
         img.beginDraw();
-        img.background(255, 255, 200);
-        img.fill(255, 200, 200);
-        img.textSize(10);
-        img.noSmooth();
-        int c = 0;
-        for (int x = 0; x < img.width; x += 40) {
-            for (int y = 0; y < img.height; y += 40){
-                if ( c++ % 2 == 0 ) {
-                    img.stroke(168, 0, 0);
-                    img.rect(x, y, 40, 40);
-                }
-                img.fill(0);
-
-                img.text( x/40 + " | " + y/40 , x ,y + 40);
-                img.fill(255, 200, 200);
-            }
-            c++;
-        }
+        img.background(136);
+        img.stroke(80);
+        img.strokeWeight(20);
+        img.point(img.width / 2, img.height/2);
+        img.point(img.width / 2 - 40, img.height/2);
+        img.point(img.width / 2 + 40, img.height/2);
+//        img.fill(255, 200, 200);
+//        img.textSize(10);
+//        int c = 0;
+//        for (int x = 0; x < img.width; x += 40) {
+//            for (int y = 0; y < img.height; y += 40){
+//                if ( c++ % 2 == 0 ) {
+//                    img.stroke(168, 0, 0);
+//                    img.rect(x, y, 40, 40);
+//                }
+//                img.fill(0);
+//
+//                img.text( x/40 + " | " + y/40 , x ,y + 40);
+//                img.fill(255, 200, 200);
+//            }
+//            c++;
+//        }
         img.endDraw();
         return img;
     }
 
-    public void setPlaneFrame(PImage frame){
+    public void setBackLayer(PImage frame){
         if(frame != null) setLayer(frame,0,255);
     }
 
@@ -134,7 +143,7 @@ public class Renderer {
 
     public void drawOnCanvas(PImage frame, int x, int y){
         if(this.layers.size() == 0 || this.layers.get(0) == null){
-            setPlaneFrame(NullImage);
+            setBackLayer(NullImage);
             return;
         }
 //        if(canvas.pixels != null) canvas.clear();
