@@ -25,7 +25,7 @@ public class Animation {
 
     public PImage play(){
         if(frames.size() == 0) return null;
-        PImage result = frames.get(currentFrameIndex % frames.size()).getImage();
+        PImage result = frames.get(currentFrameIndex % frames.size()).getFullResImage();
         currentFrameIndex++;
         return result;
     }
@@ -51,7 +51,7 @@ public class Animation {
         if(frames.size() == 0) return  null;
         Frame frame = frames.get(caretPos);
         if(frame == null) return null;
-        return frame.getImage();
+        return frame.getFullResImage();
     }
 
     public Animation(PApplet pApplet){

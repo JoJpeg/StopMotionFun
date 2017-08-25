@@ -1,5 +1,7 @@
 package com.jojpeg.controllers.actionController;
 
+import com.jojpeg.SaveSystem;
+import com.jojpeg.cam.EosCam;
 import com.jojpeg.controllers.CamSettingsController;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
@@ -17,6 +19,12 @@ public class CamSettingsActionHandler extends ActionHandler{
         public void Invoke() {
 
             controller.cam.initialize(controller.getCamIndex());
+            if(controller.cam instanceof EosCam){
+                EosCam cam = ((EosCam)controller.cam);
+                if(cam.getCam() != null){
+                    cam.getCam().setDirectory(SaveSystem.Instance.dirDialog());
+                }
+            }
         }
     };
 

@@ -19,10 +19,11 @@ public class SaveSystem {
     FileReader reader;
     File lastSelection;
     PApplet p;
-
+    public static SaveSystem Instance;
 
     public SaveSystem(PApplet p) {
         this.p = p;
+        Instance = this;
     }
 
 
@@ -43,7 +44,6 @@ public class SaveSystem {
 //        chooser.setFile(defaultSelection.getName());
 //        p.selectOutput(message, "fileSelected");
     }
-
 
     public Object load(Object object){
         File selectedFile;
@@ -94,5 +94,10 @@ public class SaveSystem {
 
     public File getLastSelection() {
         return lastSelection;
+    }
+
+    public String dirDialog(){
+        FileDialog chooser = new FileDialog(p.frame,message,FileDialog.LOAD);
+        return chooser.getDirectory();
     }
 }

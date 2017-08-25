@@ -23,7 +23,7 @@ public class AsyncFrameHandler {
         Thread loadImage = new Thread() {
             @Override
             public void run() {
-                PImage image = frame.getImage();
+                PImage image = frame.getFullResImage();
                 PImage newImage = p.loadImage(imgPath);
                 System.out.println(" > Image Requested");
                 while (newImage.width == 0){
@@ -32,6 +32,7 @@ public class AsyncFrameHandler {
                 if(newImage.width != -1){
                     replacePixels(image, newImage);
                     frame.imageLoded = true;
+                    frame.calculateScreenResImage(p.width,p.height, true);
                     System.out.println(" > Image Loaded");
                     return;
                 }

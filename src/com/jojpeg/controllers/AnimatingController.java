@@ -62,7 +62,7 @@ public class AnimatingController extends Controller {
         if(model.onion) {
             int layer = 1;
             for (int i = animation.caretPos - model.onionBack; i < animation.caretPos + model.onionFront + 1; i++) {
-                PImage onion = animation.getFrame(i).getImage();
+                PImage onion = animation.getFrame(i).getFullResImage();
                 if(onion != null && i != animation.caretPos) {
                     renderer.setLayer(onion, layer, model.onionOpacity);
                     layer ++;
@@ -92,10 +92,10 @@ public class AnimatingController extends Controller {
             Frame frame = frames.get(i);
             String path = parentPath + frame.getName()+ " - " + p.nf(i, 5) + ".png";
             System.out.println(path);
-            frame.getImage().save(path);
+            frame.getFullResImage().save(path);
 
             gif.setDelay(1000 / Animation.fps);
-            gif.addFrame(frame.getImage());
+            gif.addFrame(frame.getFullResImage());
         }
         gif.finish();
     }
@@ -116,15 +116,17 @@ public class AnimatingController extends Controller {
         for (int i = 0; i < names.length; i++) {
             String name = names[i];
             PImage image = p.loadImage(animation.model.path  + name + " - " + p.nf(animation.model.indices[i], 5) + ".png");
+            Frame frame =   animation.makeFrame(image, name);
+            frame.calculateThumbnail(200);
             animation.frames.set(
-                    animation.model.indices[i],
-                    animation.makeFrame(image, name)
+                animation.model.indices[i],
+                frame
             );
+
         }
     }
 
     public void drawThumbsBar(PApplet p){
-
         PImage[] thumbs = new PImage[7];
         int index = 0;
         for (int i = animation.caretPos - 3; i < animation.caretPos + 4; i++) {

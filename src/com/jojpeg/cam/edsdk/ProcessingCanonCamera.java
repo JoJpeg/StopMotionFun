@@ -23,15 +23,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
-
 import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import com.jojpeg.cam.EosCam;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -103,6 +97,8 @@ public class ProcessingCanonCamera extends CanonCamera {
 		parent = theParent;
 		this.methodParent = methodParent;
 
+
+		//TODO: Edit dir
 		dir = parent.saveFile( "canon-images" ); 
 		liveView = parent.createImage( 1, 1, PImage.RGB ); 
 		welcome();
@@ -256,8 +252,7 @@ public class ProcessingCanonCamera extends CanonCamera {
 	}
 
 	private void welcome() {
-		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
-		System.out.println( "Running on Java " +
+		System.out.println( "EDSDK4J Running on Java " +
 			System.getProperty( "java.version") + "/" + 
 			System.getProperty( "java.vendor" ) + 
 			" (" + System.getProperty("sun.arch.data.model") + "bit)"
@@ -631,7 +626,7 @@ public class ProcessingCanonCamera extends CanonCamera {
 				
 				try{ Thread.sleep( 1 ); }
 				catch( InterruptedException e ){
-					System.err.println( "edsdk-p5: Auto liveview updater stopped" ); 
+					System.err.println( "edsdk-p5: Auto live view updater stopped" );
 				}
 			}
 		}

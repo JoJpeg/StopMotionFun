@@ -1,7 +1,6 @@
 package com.jojpeg;
 
 import com.jojpeg.cam.EosCam;
-import com.jojpeg.cam.WebCam;
 import com.jojpeg.controllers.*;
 import com.jojpeg.input.Action;
 import com.jojpeg.input.Input;
@@ -32,7 +31,7 @@ public class ProcessingCore extends PApplet {
 
         println("Initializing Camera...");
 
-        EosCam cam = new EosCam(this);
+
 
         println("Initializing AnimationSystem...");
         Animation animation = new Animation(this);
@@ -46,6 +45,8 @@ public class ProcessingCore extends PApplet {
 
         println("Initializing Save System...");
         SaveSystem saveSystem = new SaveSystem(this);
+
+        EosCam cam = new EosCam(this, saveSystem.dirDialog());
 
         println("Initializing Renderer...");
         renderer = new Renderer(this, width, height);

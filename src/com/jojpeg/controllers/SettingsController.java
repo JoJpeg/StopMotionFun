@@ -50,7 +50,7 @@ public class SettingsController extends Controller {
     }
 
     public void takeReferencePicture(Cam cam){
-        referenceImage = cam.getFrame().getImage();
+        referenceImage = cam.getFrame().getFullResImage();
     }
 
     @Override

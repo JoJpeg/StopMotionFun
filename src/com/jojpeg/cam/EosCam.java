@@ -8,36 +8,40 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public class EosCam implements Cam{
 
     ProcessingCanonCamera cam;
-    ArrayList<String> fullResPaths = new ArrayList<>();
-    ArrayList<String> lowResPaths = new ArrayList<>();
 
     PApplet p;
     PImage lastLive;
 
+    String dir;
+
     AsyncFrameHandler asyncFrameHandler;
 
-    private boolean initialized = false;
+//    private boolean initialized = false;
 
     public int qualityDivider = 2;
 
-    public EosCam(PApplet p) {
+    public EosCam(PApplet p, String dir) {
         this.p = p;
         asyncFrameHandler = new AsyncFrameHandler(p);
-        initialize(0);
+        try{
+            initialize(0);
+            cam.setDirectory(dir);
+            System.out.println("Initialized Cam on Folder: " + dir);
+        }catch (Exception e){
+            System.out.println("Cam Initialisation failed");
+        }
     }
 
     @Override
     public void initialize(int index) {
         try {
-            initialized = true;
+//            initialized = true;
 //        cam = new ProcessingCanonCamera(p);
             cam = new ProcessingCanonCamera(p, this);
-
 
             p.frameRate(30);
 
@@ -46,14 +50,15 @@ public class EosCam implements Cam{
 
             cam.setDeleteAfterDownload(false);
             cam.setAutoDownload(true);
+
 //         automatically create small thumbnails for every jpeg that was downloaded
             cam.setThumbnailWidth(200);
 
-//         a background thread will fetch the liveview when it's on
+//         a background thread will fetch the live view when it's on
 //         alternatively you can call cam.read() inside the draw() loop.
             cam.setAutoUpdateLiveView(true);
 
-//         start the liveview
+//         start the live view
             cam.beginLiveView();
         }
         catch (Exception e){
@@ -106,4 +111,7 @@ public class EosCam implements Cam{
         System.out.println( "Raw Image taken: " + file.getAbsolutePath() );
     }
 
+    public ProcessingCanonCamera getCam() {
+        return cam;
+    }
 }
